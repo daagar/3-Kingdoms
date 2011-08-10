@@ -50,6 +50,16 @@ function resetArea(areaname)
 	end
 end
 
+function createArea(areaname)
+  local area_id = addAreaName(areaname)
+
+  if area_id == -1 then
+    echo("[[createArea: Area name already exists!]]\n")
+  else
+    echo("[[createArea: New area created with id "..area_id.."]]\n")
+  end
+end
+
 
 
 ----------------------
@@ -136,6 +146,56 @@ function setRoomByLook(roomname, roomdesc)
 
 end
 
+function mergeRooms(top_room, bottom_room)
+  local top_exits = getRoomExits(top_room)
+  local bottom_exits = getRoomExits(bottom_room)
+  local top_special_exits = getSpecialExitsSwap(top_room)
+  local bottom_special_exits = getSpecialExitsSwap(bottom_room)
+
+  -- Remap all exits from the top room to the bottom room, excluding fake rooms
+  for exit_dir, id in pairs(top_exits) do
+    if getRoomAreaName(getRoomArea(id)) == current_area then
+      local other_room_exits = getRoomExits(id)
+      display(other_room_exits)
+      local opposite = DIR_OPPOSITE[DIR_NORMALIZE[exit_dir]]
+      --echo("opposite)
+      --echo("other id:"..other_room_exits[DIR_NORMALIZE_SHORT[opposite]].."\n")
+      setExit(id, bottom_room, opposite)
+      setExit(bottom_room, id, DIR_NORMALIZE[exit_dir])
+    else
+      -- It is a fake room, remove it
+      deleteRoom(id)
+    end
+  end
+
+  -- Now fix up special exits
+  for exit_dir, id in pairs(top_special_exits) do
+    if not table.contains(bottom_special_exits, exit_dir) then
+      
+      addSpecialExit(id, bottom_room, exit_dir)
+
+      local other_room_exits = getSpecialExitsSwap(id)
+      -- Can't remove just one special exit, have to nuke all of them...
+      clearSpecialExits(id)
+      -- Find exits that lead back to the top room, and map them instead
+      -- to the bottom room. If it is a special exit that leads somewhere else,
+      -- keep that mapping the same.
+      for exit_dir_other, id_other in pairs(other_room_exits) do
+        if id_other == top_room then
+          addSpecialExit(id_other, bottom_room, exit_dir_other)
+        else
+          addSpecialExit(id_other, id, exit_dir_other)
+        end
+      end
+
+    end
+  end
+
+  deleteRoom(top_room)
+  centerview(current_room)
+end
+
+
 function createNewRoom(roomname, roomdesc, roomexits)
 
 	prior_room = current_room
@@ -161,9 +221,44 @@ function createNewRoom(roomname, roomdesc, roomexits)
 
 	-- If it ends up being a duplicate, throw it out
 	if checkDuplicateRoom(area_id, room_id) then
-		echo("[[createNewRoom: Duplicate/overlapping rooms found, no new room created]]\n")
-		deleteRoom(room_id)
-		return
+		--echo("[[createNewRoom: Duplicate/overlapping rooms found, no new room created]]\n")
+		--deleteRoom(room_id)
+    -- Move all rooms along the axis of movement away to make room for the new room. 
+    local x_axis_pos = {"e"}
+    local x_axis_neg = {"w"}
+    local y_axis_pos = {"n", "nw", "ne" }
+    local y_axis_neg = {"s", "sw", "se" }  
+    local rooms = getAreaRooms(area_id)
+    if table.contains(y_axis_pos, command) then
+      for name, id in pairs(rooms) do
+        local x,y,z = getRoomCoordinates(id)
+        if y >= current_y then
+          setRoomCoordinates(id, x, y+2, z)
+        end
+      end
+    elseif table.contains(y_axis_neg, command) then
+      for name, id in pairs(rooms) do
+        local x,y,z = getRoomCoordinates(id)
+        if y <= current_y then
+          setRoomCoordinates(id, x, y-2, z)
+        end
+      end
+    elseif table.contains(x_axis_pos, command) then
+      for name, id in pairs(rooms) do
+        local x,y,z = getRoomCoordinates(id)
+        if x >= current_x then
+          setRoomCoordinates(id, x+2, y, z)
+        end
+      end
+    elseif table.contains(x_axis_neg, command) then
+      for name, id in pairs(rooms) do
+        local x,y,z = getRoomCoordinates(id)
+        if x <= current_x then
+          setRoomCoordinates(id, x-2, y, z)
+        end
+      end
+    end
+		--return
 	end
 
 	connectExitToHere(room_id)
@@ -345,8 +440,6 @@ end
 function getOppositeDirection(direction)
 	-- Make sure the direction is 'long form'
 	local direction = normalizeDirection(direction)
-
-
 
 	echo("[[getOpposite: orig direction = "..direction.."]]\n")
 
