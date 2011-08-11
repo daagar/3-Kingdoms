@@ -1,66 +1,3 @@
----------------------
---  Area Handling  --
----------------------
-
--- Set the active area
--- Returns the areaname on success, "" otherwise
-function setArea(areaname)
-	local t = getAreaTable()
-	--display(t)
-	if table.contains(t, areaname) then
-		echo("[[setArea: Setting active area to '" .. areaname .. "']]\n")
-		return areaname
-	else
-		echo("[[setArea: No such area as '"..areaname.."'. Please 'createarea' first]]\n")
-	end
-
-	return ""
-end
-
--- Return an id for the given area name, nil if area doesn't exist
-function getAreaId(areaname)
-	local t = getAreaTable()
-	local id = t[areaname]
-
-	if id then
-		echo("[[getAreaId: Found area id of "..id.." for area name '"..areaname.."']]\n")
-		return id
-	else
-		echo("[[getAreaId: No id found for that area!]]\n")
-	end
-
-	return nil
-end
-
--- Remove all rooms in the given area
-function resetArea(areaname)
-	local area_id = getAreaId(areaname)
-
-	if area_id then
-		local t = getAreaRooms(area_id)
-		for k,v in pairs(t) do
-			deleteRoom(v)
-		end
-
-		prior_room = 0
-		current_room = 0
-		echo("[[resetArea: All rooms removed]]")
-	else
-		echo("[[resetArea: Invalid area - no rooms removed]]")
-	end
-end
-
-function createArea(areaname)
-  local area_id = addAreaName(areaname)
-
-  if area_id == -1 then
-    echo("[[createArea: Area name already exists!]]\n")
-  else
-    echo("[[createArea: New area created with id "..area_id.."]]\n")
-  end
-end
-
-
 
 ----------------------
 --   Room Handling  --
@@ -154,14 +91,15 @@ function mergeRooms(top_room, bottom_room)
 
   -- Remap all exits from the top room to the bottom room, excluding fake rooms
   for exit_dir, id in pairs(top_exits) do
+    exit_dir = normalizeDirToShort(exit_dir)
     if getRoomAreaName(getRoomArea(id)) == current_area then
       local other_room_exits = getRoomExits(id)
       display(other_room_exits)
-      local opposite = DIR_OPPOSITE[DIR_NORMALIZE[exit_dir]]
+      local opposite = getOppositeDir(exit_dir)
       --echo("opposite)
-      --echo("other id:"..other_room_exits[DIR_NORMALIZE_SHORT[opposite]].."\n")
+      --echo("other id:"..other_room_exits[DIR_EXPAND[opposite]].."\n")
       setExit(id, bottom_room, opposite)
-      setExit(bottom_room, id, DIR_NORMALIZE[exit_dir])
+      setExit(bottom_room, id, exit_dir)
     else
       -- It is a fake room, remove it
       deleteRoom(id)
@@ -169,14 +107,14 @@ function mergeRooms(top_room, bottom_room)
   end
 
   -- Now fix up special exits
-  for exit_dir, id in pairs(top_special_exits) do
-    if not table.contains(bottom_special_exits, exit_dir) then
+  for exit_dir_top, id_top in pairs(top_special_exits) do
+    if not table.contains(bottom_special_exits, exit_dir_top) then
       
-      addSpecialExit(id, bottom_room, exit_dir)
+      addSpecialExit(id_top, bottom_room, exit_dir_top)
 
-      local other_room_exits = getSpecialExitsSwap(id)
+      local other_room_exits = getSpecialExitsSwap(id_top)
       -- Can't remove just one special exit, have to nuke all of them...
-      clearSpecialExits(id)
+      clearSpecialExits(id_top)
       -- Find exits that lead back to the top room, and map them instead
       -- to the bottom room. If it is a special exit that leads somewhere else,
       -- keep that mapping the same.
@@ -405,7 +343,7 @@ function createFakeExits(room_id, seen_exits)
 			addRoom(room_id)
 			setRoomName(room_id, tostring(room_id)..":"..current_area)
 			setRoomArea(room_id, fake_area)
-			setExit(current_room, room_id, DIR_NORMALIZE[dir])
+			setExit(current_room, room_id, normalizeDirToShort(dir))
 			echo("[[fake: Created fake room "..room_id.." with exit from "..current_room.."]]\n")
 		else
 			setRoomChar(id, ">")
@@ -415,44 +353,19 @@ function createFakeExits(room_id, seen_exits)
 
 end
 
-function initFakeArea()
-	local fake_area_id = addAreaName("fakeexitarea")
-	if fake_area_id == -1 then
-		local t = getAreaTable()
-		fake_area_id = t["fakeexitarea"]
-	end
-	
-	return fake_area_id
-end
-
 ------------------------
 --   Utility        --
 ------------------------
 
-function normalizeDirection(direction)
-	if table.contains(DIR_LONG, direction) then
-		direction = DIR_NORMALIZE[direction]
-	end
-
-	return direction
-end
-
-function getOppositeDirection(direction)
-	-- Make sure the direction is 'long form'
-	local direction = normalizeDirection(direction)
-
-	echo("[[getOpposite: orig direction = "..direction.."]]\n")
-
-	return DIR_OPPOSITE[direction]
-end
 
 function followDirection(dir)
 	if current_room == 0 then return end
 
 	-- If it is a normal compass direction...
 	if isCardinalDirection(dir) then
+    setNewCoordinates(dir)
 		local t = getRoomExits(current_room)
-		local existing_room = t[DIR_NORMALIZE_SHORT[dir]]
+		local existing_room = t[normalizeDirToLong(dir)]
 		setMapToExistingRoom(existing_room)
 	else
 		local t = getSpecialExitsSwap(current_room)
@@ -477,13 +390,14 @@ end
 function mapDirection(dir)
 	echo("[[mapDir: Found command: "..dir .. "]]\n")
 	if isCardinalDirection(dir) then
+    setNewCoordinates(dir)
 		echo("[[mapDir: Confirmed movement command]]\n")
 
 		if current_room ~= 0 then
 			-- If there is no room already in this direction, create a new room
 			local t = getRoomExits(current_room)
 			--display(t)
-			local existing_room = t[DIR_NORMALIZE_SHORT[dir]]
+			local existing_room = t[DIR_EXPAND[dir]]
 			if existing_room and getRoomAreaName(getRoomArea(existing_room)) ~= "fakeexitarea" then
 
 				echo("[[mapDir: Found an existing room at this exit: id: "..existing_room.."]]\n")
@@ -518,6 +432,8 @@ end
 
 -- For a given direction, give the relative coordinates from "here"
 function getRelativeCoords(direction)
+  assert(isCardinalDirection(direction), "getRelativeCoords: Invalid direction provided\n")
+  
 	echo("[[getRelative: direction = "..direction.."]]\n")
 	if direction == "e" then 
 		return 2, 0, 0
@@ -558,21 +474,7 @@ function setNewCoordinates(direction)
 		current_z = current_z + z
 end
 
-function isCardinalDirection(command)
-	--display(exittable)
 
-	--echo("[[isCardinal: given command: "..command.."]]\n")
-	-- If it is a 'short' direction, spell it out (ie., s = south)
-	command = normalizeDirection(command)
 
-	echo("[[isCardinal: normalized command: "..command.."]]\n")
-	if table.contains(DIR_SHORT,command) then
-		setNewCoordinates(command)
-		return true
-	end
-
-	return false
-
-end
 
 
