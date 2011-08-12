@@ -1,4 +1,3 @@
-
 ----------------------
 --   Room Handling  --
 ----------------------
@@ -52,24 +51,9 @@ function setRoomByLook(roomname, roomdesc)
 		if name == roomname then match_rooms[id]=name end
 	end
 
-	display(match_rooms)
+	--display(match_rooms)
 
-	-- Can't find anything relevant
-	if table.size(match_rooms) == 0 then
-		echo("[[setRoomByLook: Can't find any matching rooms!]]\n")
-		return
-	end
-
-	-- Found a single instance of it, good enough!
-	if table.size(match_rooms) == 1 then
-		for id, name in pairs(match_rooms) do
-			echo("[[setRoom: Found a matching room! Setting map to location]]\n")
-			setRoomById(id)
-		end
-		return
-	end
-
-	-- Found multiple rooms, try to narrow it down by using the room desc
+	-- Try to narrow it down by using the room desc
 	for id, name in pairs(match_rooms) do
 		local desc = getRoomUserData(id, "description")
 		if desc == roomdesc then
@@ -136,8 +120,6 @@ end
 
 function createNewRoom(roomname, roomdesc, roomexits)
 
-	prior_room = current_room
-
 	if current_area == "" then
 		echo("[[createNewRoom: No area set! Use 'setarea <name>' first.]]\n")
 		return
@@ -149,6 +131,8 @@ function createNewRoom(roomname, roomdesc, roomexits)
 		return
 	end
 
+	prior_room = current_room
+
 	-- Start creating a new room
 	local room_id = createRoomID()
 	addRoom(room_id)
@@ -156,11 +140,38 @@ function createNewRoom(roomname, roomdesc, roomexits)
 	setRoomUserData(room_id, "description", roomdesc)
 	setRoomCoordinates(room_id, current_x, current_y, current_z)
 
+  local overlapping_room = isRoomOverlapping(area_id, room_id)
 
-	-- If it ends up being a duplicate, throw it out
-	if checkDuplicateRoom(area_id, room_id) then
-		--echo("[[createNewRoom: Duplicate/overlapping rooms found, no new room created]]\n")
-		--deleteRoom(room_id)
+  if overlapping_room then
+    echo("Found overlapping room\n")
+   	if isSameRoom(room_id, overlapping_room) then
+
+			echo(".. it is a duplicate room\n")
+			connectExitToHere(overlapping_room)
+			centerview(overlapping_room)
+			current_x, current_y, current_z = getRoomCoordinates(overlapping_room)
+			current_room = overlapping_room
+      return overlapping_room
+    else
+      echo("Moving other rooms out of the way")
+      moveCollidingRooms(area_id)
+		end
+  end
+
+ 	connectExitToHere(room_id)
+
+  -- Otherwise, add it to the current area
+  current_room = room_id
+  setRoomArea(room_id, area_id)
+
+  createFakeExits(room_id, roomexits)
+
+  echo("[[createNewRoom: Created new room with id: "..room_id.."]]\n")
+  centerview(room_id)
+  return room_id 
+ end
+
+function moveCollidingRooms(area_id)
     -- Move all rooms along the axis of movement away to make room for the new room. 
     local x_axis_pos = {"e"}
     local x_axis_neg = {"w"}
@@ -196,21 +207,7 @@ function createNewRoom(roomname, roomdesc, roomexits)
         end
       end
     end
-		--return
-	end
 
-	connectExitToHere(room_id)
-
-	-- Otherwise, add it to the current area
-	current_room = room_id
-	setRoomArea(room_id, area_id)
-
-
-	createFakeExits(room_id, roomexits)
-
-	echo("[[createNewRoom: Created new room with id: "..room_id.."]]\n")
-	centerview(room_id)
-	return room_id
 end
 
 function connectExitToHere(room_id)
@@ -218,7 +215,7 @@ function connectExitToHere(room_id)
 
 	-- Make the bad assumption that exits will always be two way when
 	-- they are cardinal directions. 
-	local opposite_direction = getOppositeDirection(direction)
+	local opposite_direction = getOppositeDir(direction)
 	--echo("[[connectExit: Orig. direction: "..direction.." Opposite: "..opposite_direction.."]]\n")
 
 	-- If we don't know what our prior room was, bail
@@ -279,6 +276,11 @@ function linkSpecialExit(move_command, dir)
 
 end
 
+function isRoomOverlapping(area_id, new_room)
+  local t = getRoomsByPosition(area_id, current_x, current_y, current_z)
+  return t[0]
+end
+
 function checkDuplicateRoom(area_id, new_room)
 	-- WARNING: getRoomsByPosition starts indexing at 0, so we can't check
 	-- the array size with #t. Instead, we have to try pulling from it.
@@ -319,12 +321,11 @@ function isSameRoom(source, destination)
 	return false
 end
 
+-- By creating rooms in a 'bogus' area, we can get exit arrows on rooms
+-- to show unexplored exits. 
 function createFakeExits(room_id, seen_exits)
 	local defined_exits = getRoomExits(room_id)
 	local seen_exits = seen_exits
-
-	--display(seen_exits)
-	--display(defined_exits)
 
 	-- Check all the seen exits for already linked directions, and eliminate those
 	for id, dir in pairs(seen_exits) do
@@ -332,8 +333,6 @@ function createFakeExits(room_id, seen_exits)
 			table.remove(seen_exits, id)
 		end
 	end
-
-	--display(seen_exits)
 
 	-- With the exits that remain, create 'fake' exits so they show up on the map
 	-- as 'unexplored'
@@ -344,10 +343,10 @@ function createFakeExits(room_id, seen_exits)
 			setRoomName(room_id, tostring(room_id)..":"..current_area)
 			setRoomArea(room_id, fake_area)
 			setExit(current_room, room_id, normalizeDirToShort(dir))
-			echo("[[fake: Created fake room "..room_id.." with exit from "..current_room.."]]\n")
+			--echo("[[fake: Created fake room "..room_id.." with exit from "..current_room.."]]\n")
 		else
 			setRoomChar(id, ">")
-			echo("[[fake: Created fake room character]]\n")
+			--echo("[[fake: Created fake room character]]\n")
 		end
 	end
 
@@ -370,7 +369,7 @@ function followDirection(dir)
 	else
 		local t = getSpecialExitsSwap(current_room)
 		local existing_room = t[dir]
-		display(t)
+		--display(t)
 		if table.contains(t, dir) then
 			echo("[[follow: Found known special exits]]\n")
 			setMapToExistingRoom(existing_room)
@@ -387,45 +386,49 @@ function setMapToExistingRoom(room_id)
 	end
 end
 
+-- Attempt to map a special exit. Returns true if a new room is created as a result, otherwise false
+function mapSpecialExit(dir)
+  local mapped_special = false
+ 	local special_exit, newdir = string.match(dir,">(.*)>(%w+)")
+
+  if not isCardinalDirection(dir) and newdir then
+    echo("[[mapSpecial: Mapping "..special_exit.." to direction "..newdir.."]]\n")
+    command = newdir
+    mapDirection(newdir)
+    linkSpecialExit(special_exit, DIR_OPPOSITE[newdir])
+    mapped_special = true
+  end
+
+  return mapped_special
+end
+
 function mapDirection(dir)
-	echo("[[mapDir: Found command: "..dir .. "]]\n")
-	if isCardinalDirection(dir) then
-    setNewCoordinates(dir)
-		echo("[[mapDir: Confirmed movement command]]\n")
+	--echo("[[mapDir: Found command: "..dir .. "]]\n")
 
-		if current_room ~= 0 then
-			-- If there is no room already in this direction, create a new room
-			local t = getRoomExits(current_room)
-			--display(t)
-			local existing_room = t[DIR_EXPAND[dir]]
-			if existing_room and getRoomAreaName(getRoomArea(existing_room)) ~= "fakeexitarea" then
+  -- If it is a special exit command, map it
+  if mapSpecialExit(dir) then return end
 
-				echo("[[mapDir: Found an existing room at this exit: id: "..existing_room.."]]\n")
-				setRoomById(existing_room)
-
-			elseif existing_room and getRoomAreaName(getRoomArea(existing_room)) == "fakeexitarea" then
-				deleteRoom(existing_room)
-				createNewRoom(roomname, roomdesc, exittable)
-			else
-				createNewRoom(roomname, roomdesc, exittable)
-			end
-		else
-			echo("[[mapDir: Creating first room of area]]\n")
-			createNewRoom(roomname, roomdesc, exittable)
-		end
-
-	else
-		echo("[[mapDir: Room seen, but not a cardinal direction.]]\n")
-		local special_exit, newdir = string.match(dir,">(.*)>(%w+)")
-		if newdir then
-			command = newdir
-			echo("[[specialExit: ".. special_exit.."]]\n")
-			mapDirection(newdir)
-			linkSpecialExit(special_exit, DIR_OPPOSITE[newdir])
-		end
+  if current_room == 0 then
+		echo("[[mapDir: Creating first room of area]]\n")
+		createNewRoom(roomname, roomdesc, exittable)
+    return
 	end
 
-	echo("[[mapDir: roomname = "..roomname.."]]\n")
+  setNewCoordinates(dir)
+
+	local t = getRoomExits(current_room)
+  display(t)
+	local existing_room = t[DIR_EXPAND[dir]]
+display(existing_room)
+    if existing_room and getRoomAreaName(getRoomArea(existing_room)) ~= "fakeexitarea" then
+		  echo("[[mapDir: Found an existing room at this exit: id: "..existing_room.."]]\n")
+		  setRoomById(existing_room)
+	  elseif existing_room and getRoomAreaName(getRoomArea(existing_room)) == "fakeexitarea" then
+		  deleteRoom(existing_room)
+		  createNewRoom(roomname, roomdesc, exittable)
+    else
+      createNewRoom(roomname, roomdesc, exittable)
+    end
 end
 
 

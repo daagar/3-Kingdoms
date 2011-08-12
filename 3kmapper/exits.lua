@@ -46,14 +46,12 @@ function isCardinalDirection(command)
 
 	-- If it is a 'short' direction, spell it out (ie., s = south)
 	command = normalizeDirToShort(command)
-
-	echo("[[isCardinal: normalized command: "..command.."]]\n")
+	--echo("[[isCardinal: normalized command: "..command.."]]\n")
 	if table.contains(DIR_SHORT,command) then
 	  is_cardinal = true	
 	end
 
 	return is_cardinal
-
 end
 
 -- Covert "long" directions to short (ie., north -> n)
@@ -77,6 +75,5 @@ end
 -- Returns the short-form opposite to a given cardinal direction
 function getOppositeDir(direction)
   assert(table.contains(DIR_SHRINK, direction), "getOppositeDir: Invalid direction "..direction.."specified\n")
-
 	return DIR_OPPOSITE[normalizeDirToShort(direction)]
 end

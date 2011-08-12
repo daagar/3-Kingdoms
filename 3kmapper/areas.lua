@@ -3,7 +3,7 @@
 -- Init --
 -----------
 
-fake_area = initFakeArea()
+--fake_area = initFakeArea()
 
 --------------------
 -- Area Handling --
