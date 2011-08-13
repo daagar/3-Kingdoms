@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MudletPackage>
+<MudletPackage version="1.0">
+    <ScriptPackage>
+        <ScriptGroup isActive="yes" isFolder="yes">
+            <name>mapper</name>
+            <packageName></packageName>
+            <script>
+</script>
+            <eventHandlerList/>
+            <Script isActive="yes" isFolder="no">
+                <name>onSysLoadEvent</name>
+                <packageName></packageName>
+                <script>function onSysLoadEvent(event, args)
+
+  dofile(getMudletHomeDir()..&quot;/scripts/3kmapper/areas.lua&quot;)
+  dofile(getMudletHomeDir()..&quot;/scripts/3kmapper/3kmapper.lua&quot;)
+  dofile(getMudletHomeDir()..&quot;/scripts/3kmapper/exits.lua&quot;)
+
+  current_area = &quot;&quot;
+  fake_area = initFakeArea()
+
+  current_x = 0
+  current_y = 0
+  current_z = 0
+
+  last_x = 0
+  last_y = 0
+  last_z = 0
+
+  command = &quot;&quot;
+
+  mapping = false
+
+  current_room = 0
+  prior_room = 0
+
+  expandAlias(&quot;mfind&quot;)
+
+end</script>
+                <eventHandlerList>
+                    <string>sysLoadEvent</string>
+                </eventHandlerList>
+            </Script>
+            <Script isActive="yes" isFolder="no">
+                <name>onSysDataSendRequest</name>
+                <packageName></packageName>
+                <script>function onSysDataSendRequest(_, command)
+   command = command
+	--isDirection(command, exittable)
+	--mapDirection(command)
+end
+</script>
+                <eventHandlerList>
+                    <string>sysDataSendRequest</string>
+                </eventHandlerList>
+            </Script>
+        </ScriptGroup>
+    </ScriptPackage>
+</MudletPackage>

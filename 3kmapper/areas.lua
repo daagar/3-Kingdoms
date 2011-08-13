@@ -30,10 +30,10 @@ function getAreaId(areaname)
 	local id = t[areaname]
 
 	if id then
-		echo("[[getAreaId: Found area id of "..id.." for area name '"..areaname.."']]\n")
+		--echo("[[getAreaId: Found area id of "..id.." for area name '"..areaname.."']]\n")
 		return id
 	else
-		echo("[[getAreaId: No id found for that area!]]\n")
+		--echo("[[getAreaId: No id found for that area!]]\n")
 	end
 
 	return nil
