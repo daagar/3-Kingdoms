@@ -338,7 +338,7 @@ end
 
 function isRoomOverlapping(area_id, new_room)
   local t = getRoomsByPosition(area_id, current_x, current_y, current_z)
-  return t[0]
+  if t then return t[0] else return false end -- t is nil on first room of area
 end
 
 function checkDuplicateRoom(area_id, new_room)
@@ -495,7 +495,7 @@ function mapDirection(dir)
 
   local t = getSpecialExitsSwap(current_room)
 	local existing_room = t[dir]
-	display(t)
+	--display(t)
 	if table.contains(t, dir) then
 		--echo("[[follow: Found known special exits]]\n")
 		setMapToExistingRoom(existing_room)
