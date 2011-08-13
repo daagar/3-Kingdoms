@@ -35,8 +35,19 @@ end
 
 function getAllExits(room_id)
    local exits = getRoomExits(room_id)
-   local sexits = swapKeysValues(getSpecialExits(room_id))
+   local sexits = getSpecialExitsSwap(room_id)
    return concatTables(exits,sexits)
+end
+
+function concatTables(table1, table2)
+	local output = {}
+	for i,v in pairs(table1) do
+		output[i] = v
+	end
+	for i,v in pairs(table2) do
+		output[i] = v
+	end
+	return output
 end
 
 ----------------------
@@ -109,6 +120,8 @@ function setRoomByLook(roomname, roomdesc)
 end
 
 function mergeRooms(top_room, bottom_room)
+  assert(getRoomArea(top_room) == getRoomArea(bottom_room), "ERROR: Rooms must be located in the same area to merge")
+
   local top_exits = getRoomExits(top_room)
   local bottom_exits = getRoomExits(bottom_room)
   local top_special_exits = getSpecialExitsSwap(top_room)
@@ -411,6 +424,22 @@ function createFakeExits(room_id, seen_exits)
 	end
 
 end
+
+function moveCurrentRoomToArea(area_name)
+  assert(current_room ~= 0, "ERROR: Don't know what room you are in!")
+  moveRoomToArea(current_room, area_name)
+end
+
+function moveRoomToArea(room_id, area_name)
+ local areas = getAreaTable()
+ assert(table.contains(areas, area_name), "ERROR: No such area to move rooms into!")
+
+ local area_id = areas[area_name]
+ setRoomArea(room_id, area_id)
+ expandAlias("mfind")
+
+end
+
 
 ------------------------
 --   Utility        --
