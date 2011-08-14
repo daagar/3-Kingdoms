@@ -1,7 +1,7 @@
-DIR_SHORT = {"n", "s", "e", "w", "ne", "nw", "se", "sw", "u", "d"}
-DIR_LONG = {"north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "up", "down"}
+daagmap.DIR_SHORT = {"n", "s", "e", "w", "ne", "nw", "se", "sw", "u", "d"}
+daagmap.DIR_LONG = {"north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "up", "down"}
 
-DIR_SHRINK = {
+daagmap.DIR_SHRINK = {
   ["north"]="n", 
   ["south"]="s", 
   ["east"] = "e", 
@@ -14,7 +14,7 @@ DIR_SHRINK = {
   ["down"]="d"
 }
 
-DIR_EXPAND = {
+daagmap.DIR_EXPAND = {
   ["n"]="north", 
   ["s"]="south", 
   ["e"]="east", 
@@ -27,7 +27,7 @@ DIR_EXPAND = {
   ["d"]="down"
 }
 
-DIR_OPPOSITE = {	
+daagmap.DIR_OPPOSITE = {	
   ["n"]="s", 	
   ["s"]="n",	
   ["w"]="e",	
@@ -41,13 +41,13 @@ DIR_OPPOSITE = {
 }
 
 
-function isCardinalDirection(command)
+function daagmap:isCardinalDirection(command)
   local is_cardinal = false
 
 	-- If it is a 'short' direction, spell it out (ie., s = south)
-	command = normalizeDirToShort(command)
+	daagmap.command = daagmap:normalizeDirToShort(daagmap.command)
 	--echo("[[isCardinal: normalized command: "..command.."]]\n")
-	if table.contains(DIR_SHORT,command) then
+	if table.contains(daagmap.DIR_SHORT,daagmap.command) then
 	  is_cardinal = true	
 	end
 
@@ -55,25 +55,25 @@ function isCardinalDirection(command)
 end
 
 -- Covert "long" directions to short (ie., north -> n)
-function normalizeDirToShort(direction)
-	if table.contains(DIR_LONG, direction) then
-		direction = DIR_SHRINK[direction]
+function daagmap:normalizeDirToShort(direction)
+	if table.contains(daagmap.DIR_LONG, direction) then
+		direction = daagmap.DIR_SHRINK[direction]
 	end
 
 	return direction
 end
 
 -- Convert "short" directions to long form (ie., n -> north)
-function normalizeDirToLong(direction)
-  if table.contains(DIR_SHORT, direction) then
-    direction = DIR_EXPAND[direction]
+function daagmap:normalizeDirToLong(direction)
+  if table.contains(daagmap.DIR_SHORT, direction) then
+    direction = daagmap.DIR_EXPAND[direction]
   end
 
   return direction
 end
 
 -- Returns the short-form opposite to a given cardinal direction
-function getOppositeDir(direction)
-  assert(table.contains(DIR_SHRINK, direction), "getOppositeDir: Invalid direction "..direction.."specified\n")
-	return DIR_OPPOSITE[normalizeDirToShort(direction)]
+function daagmap:getOppositeDir(direction)
+  --assert(table.contains(daagmap.DIR_SHRINK, direction), "getOppositeDir: Invalid direction "..direction.."specified\n")
+	return daagmap.DIR_OPPOSITE[daagmap:normalizeDirToShort(direction)]
 end
