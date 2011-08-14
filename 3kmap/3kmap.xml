@@ -3,13 +3,13 @@
 <MudletPackage version="1.0">
     <TriggerPackage>
         <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
-            <name>3kmap</name>
+            <name>mapper</name>
             <script></script>
             <triggerType>0</triggerType>
-            <conditonLineDelta>0</conditonLineDelta>
+            <conditonLineDelta>3</conditonLineDelta>
             <mStayOpen>0</mStayOpen>
             <mCommand></mCommand>
-            <packageName>3kmap</packageName>
+            <packageName></packageName>
             <mFgColor>#ff0000</mFgColor>
             <mBgColor>#ffff00</mBgColor>
             <mSoundFile></mSoundFile>
@@ -17,11 +17,38 @@
             <colorTriggerBgColor>#000000</colorTriggerBgColor>
             <regexCodeList/>
             <regexCodePropertyList/>
-            <TriggerGroup isActive="yes" isFolder="yes" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
-                <name>mapper</name>
-                <script></script>
+            <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="yes" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>roomname</name>
+                <script>roomname = matches[1]
+roomdesc = &quot;&quot;
+roomexits = &quot;&quot;
+
+enableTrigger(&quot;spacer&quot;)
+enableTrigger(&quot;roomexits&quot;)
+</script>
                 <triggerType>0</triggerType>
-                <conditonLineDelta>3</conditonLineDelta>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#717e80</mFgColor>
+                <mBgColor>#000000</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList>
+                    <string>(.+)(\s+)?Ã</string>
+                </regexCodeList>
+                <regexCodePropertyList>
+                    <integer>1</integer>
+                </regexCodePropertyList>
+            </Trigger>
+            <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>spacer</name>
+                <script>enableTrigger(&quot;roomdescription&quot;)
+disableTrigger(&quot;spacer&quot;)</script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
                 <mStayOpen>0</mStayOpen>
                 <mCommand></mCommand>
                 <packageName></packageName>
@@ -30,79 +57,37 @@
                 <mSoundFile></mSoundFile>
                 <colorTriggerFgColor>#000000</colorTriggerFgColor>
                 <colorTriggerBgColor>#000000</colorTriggerBgColor>
-                <regexCodeList/>
-                <regexCodePropertyList/>
-                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="yes" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
-                    <name>roomname</name>
-                    <script>roomname = matches[1]
-roomdesc = &quot;&quot;
-roomexits = &quot;&quot;
-
-enableTrigger(&quot;spacer&quot;)
-enableTrigger(&quot;roomexits&quot;)
-</script>
-                    <triggerType>0</triggerType>
-                    <conditonLineDelta>0</conditonLineDelta>
-                    <mStayOpen>0</mStayOpen>
-                    <mCommand></mCommand>
-                    <packageName></packageName>
-                    <mFgColor>#717e80</mFgColor>
-                    <mBgColor>#000000</mBgColor>
-                    <mSoundFile></mSoundFile>
-                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
-                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
-                    <regexCodeList>
-                        <string>(.+)(\s+)?Ã</string>
-                    </regexCodeList>
-                    <regexCodePropertyList>
-                        <integer>1</integer>
-                    </regexCodePropertyList>
-                </Trigger>
-                <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
-                    <name>spacer</name>
-                    <script>enableTrigger(&quot;roomdescription&quot;)
-disableTrigger(&quot;spacer&quot;)</script>
-                    <triggerType>0</triggerType>
-                    <conditonLineDelta>0</conditonLineDelta>
-                    <mStayOpen>0</mStayOpen>
-                    <mCommand></mCommand>
-                    <packageName></packageName>
-                    <mFgColor>#ff0000</mFgColor>
-                    <mBgColor>#ffff00</mBgColor>
-                    <mSoundFile></mSoundFile>
-                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
-                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
-                    <regexCodeList>
-                        <string>$^</string>
-                    </regexCodeList>
-                    <regexCodePropertyList>
-                        <integer>1</integer>
-                    </regexCodePropertyList>
-                </Trigger>
-                <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
-                    <name>roomexits</name>
-                    <script>
+                <regexCodeList>
+                    <string>$^</string>
+                </regexCodeList>
+                <regexCodePropertyList>
+                    <integer>1</integer>
+                </regexCodePropertyList>
+            </Trigger>
+            <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
+                <name>roomexits</name>
+                <script>
 
 </script>
-                    <triggerType>0</triggerType>
-                    <conditonLineDelta>0</conditonLineDelta>
-                    <mStayOpen>0</mStayOpen>
-                    <mCommand></mCommand>
-                    <packageName></packageName>
-                    <mFgColor>#ff0000</mFgColor>
-                    <mBgColor>#ffff00</mBgColor>
-                    <mSoundFile></mSoundFile>
-                    <colorTriggerFgColor>#ffff00</colorTriggerFgColor>
-                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
-                    <regexCodeList>
-                        <string>FG7BG0</string>
-                    </regexCodeList>
-                    <regexCodePropertyList>
-                        <integer>6</integer>
-                    </regexCodePropertyList>
-                    <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
-                        <name>trueexits</name>
-                        <script>-- On &quot;true&quot; exit lines, there will be at least one space
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#ffff00</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList>
+                    <string>FG7BG0</string>
+                </regexCodeList>
+                <regexCodePropertyList>
+                    <integer>6</integer>
+                </regexCodePropertyList>
+                <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                    <name>trueexits</name>
+                    <script>-- On &quot;true&quot; exit lines, there will be at least one space
 -- on the line. If something else in the room happens to be
 -- yellow, it will be ignored.
 
@@ -111,48 +96,48 @@ disableTrigger(&quot;roomdescription&quot;)
 roomexits = roomexits..matches[2]
 
 enableTrigger(&quot;closeroom&quot;)</script>
-                        <triggerType>0</triggerType>
-                        <conditonLineDelta>3</conditonLineDelta>
-                        <mStayOpen>0</mStayOpen>
-                        <mCommand></mCommand>
-                        <packageName></packageName>
-                        <mFgColor>#ff0000</mFgColor>
-                        <mBgColor>#ffff00</mBgColor>
-                        <mSoundFile></mSoundFile>
-                        <colorTriggerFgColor>#000000</colorTriggerFgColor>
-                        <colorTriggerBgColor>#000000</colorTriggerBgColor>
-                        <regexCodeList>
-                            <string> \s+(.*)$</string>
-                        </regexCodeList>
-                        <regexCodePropertyList>
-                            <integer>1</integer>
-                        </regexCodePropertyList>
-                    </Trigger>
-                </Trigger>
-                <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
-                    <name>roomdescription</name>
-                    <script>roomdesc = roomdesc..matches[1]..&quot;\n&quot;
---setTriggerStayOpen(&quot;roomdescription&quot;, 1)</script>
                     <triggerType>0</triggerType>
-                    <conditonLineDelta>1</conditonLineDelta>
+                    <conditonLineDelta>3</conditonLineDelta>
                     <mStayOpen>0</mStayOpen>
                     <mCommand></mCommand>
                     <packageName></packageName>
                     <mFgColor>#ff0000</mFgColor>
                     <mBgColor>#ffff00</mBgColor>
                     <mSoundFile></mSoundFile>
-                    <colorTriggerFgColor>#808000</colorTriggerFgColor>
+                    <colorTriggerFgColor>#000000</colorTriggerFgColor>
                     <colorTriggerBgColor>#000000</colorTriggerBgColor>
                     <regexCodeList>
-                        <string>FG8BG0</string>
+                        <string> \s+(.*)$</string>
                     </regexCodeList>
                     <regexCodePropertyList>
-                        <integer>6</integer>
+                        <integer>1</integer>
                     </regexCodePropertyList>
                 </Trigger>
-                <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
-                    <name>closeroom</name>
-                    <script>disableTrigger(&quot;roomexits&quot;)
+            </Trigger>
+            <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
+                <name>roomdescription</name>
+                <script>roomdesc = roomdesc..matches[1]..&quot;\n&quot;
+--setTriggerStayOpen(&quot;roomdescription&quot;, 1)</script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>1</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#808000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList>
+                    <string>FG8BG0</string>
+                </regexCodeList>
+                <regexCodePropertyList>
+                    <integer>6</integer>
+                </regexCodePropertyList>
+            </Trigger>
+            <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="yes" isColorTriggerFg="yes" isColorTriggerBg="no">
+                <name>closeroom</name>
+                <script>disableTrigger(&quot;roomexits&quot;)
 disableTrigger(&quot;closeroom&quot;)
 
 roomname = daagmap:parseRoomName(roomname)
@@ -167,114 +152,158 @@ if daagmap.isMapping then
 else
 	daagmap:followDirection(daagmap.command)
 end</script>
-                    <triggerType>0</triggerType>
-                    <conditonLineDelta>0</conditonLineDelta>
-                    <mStayOpen>0</mStayOpen>
-                    <mCommand></mCommand>
-                    <packageName></packageName>
-                    <mFgColor>#ff0000</mFgColor>
-                    <mBgColor>#ffff00</mBgColor>
-                    <mSoundFile></mSoundFile>
-                    <colorTriggerFgColor>#c0c0c0</colorTriggerFgColor>
-                    <colorTriggerBgColor>#000000</colorTriggerBgColor>
-                    <regexCodeList>
-                        <string>FG16BG0</string>
-                    </regexCodeList>
-                    <regexCodePropertyList>
-                        <integer>6</integer>
-                    </regexCodePropertyList>
-                </Trigger>
-            </TriggerGroup>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#ff0000</mFgColor>
+                <mBgColor>#ffff00</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#c0c0c0</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList>
+                    <string>FG16BG0</string>
+                </regexCodeList>
+                <regexCodePropertyList>
+                    <integer>6</integer>
+                </regexCodePropertyList>
+            </Trigger>
+            <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="yes" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                <name>walking</name>
+                <script>
+roomname = daagmap:parseRoomName(matches[1])
+daagmap:followDirection(daagmap.command)
+if daagmap.path[1] then
+  local dirToSend = daagmap.path[1]
+  table.remove(daagmap.path, 1)
+  send(dirToSend)
+else
+  enableTrigger(&quot;roomname&quot;)
+  speedwalking = false
+  disableTrigger(&quot;walking&quot;)
+end</script>
+                <triggerType>0</triggerType>
+                <conditonLineDelta>0</conditonLineDelta>
+                <mStayOpen>0</mStayOpen>
+                <mCommand></mCommand>
+                <packageName></packageName>
+                <mFgColor>#6d6d51</mFgColor>
+                <mBgColor>#000000</mBgColor>
+                <mSoundFile></mSoundFile>
+                <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                <regexCodeList>
+                    <string>(.+)(\s+)?Ã</string>
+                </regexCodeList>
+                <regexCodePropertyList>
+                    <integer>1</integer>
+                </regexCodePropertyList>
+            </Trigger>
         </TriggerGroup>
     </TriggerPackage>
     <TimerPackage/>
     <AliasPackage>
         <AliasGroup isActive="yes" isFolder="yes">
-            <name>3kmap</name>
+            <name>run-lua-code-v4</name>
             <script></script>
             <command></command>
-            <packageName>3kmap</packageName>
+            <packageName>run-lua-code-v4</packageName>
             <regex></regex>
-            <AliasGroup isActive="yes" isFolder="yes">
-                <name>mapper</name>
-                <script></script>
+            <Alias isActive="yes" isFolder="no">
+                <name>run lua code</name>
+                <script>local f,e = loadstring(&quot;return &quot;..matches[2])
+if not f then
+	f,e = assert(loadstring(matches[2]))
+end
+
+local r = f()
+if r ~= nil then display(r) end</script>
                 <command></command>
                 <packageName></packageName>
-                <regex></regex>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Create New Area</name>
-                    <script>daagmap:createArea(matches[2])</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mca (.*)$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Link Special Exit</name>
-                    <script>--send(matches[2])
+                <regex>^lua (.*)$</regex>
+            </Alias>
+        </AliasGroup>
+        <AliasGroup isActive="yes" isFolder="yes">
+            <name>mapper</name>
+            <script></script>
+            <command></command>
+            <packageName></packageName>
+            <regex></regex>
+            <Alias isActive="yes" isFolder="no">
+                <name>Create New Area</name>
+                <script>daagmap:createArea(matches[2])</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^mca (.*)$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Link Special Exit</name>
+                <script>--send(matches[2])
 daagmap.isSpecialMapping = true
 daagmap.specialCommand = matches[1]
 send(matches[2])
 --mapDirection(matches[1])</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>&gt;([^&gt;]+)&gt;(\w+)</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Disable Mapping Mode</name>
-                    <script>echo(&quot;[[Mapping Off]]\n&quot;)
+                <command></command>
+                <packageName></packageName>
+                <regex>&gt;([^&gt;]+)&gt;(\w+)</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Disable Mapping Mode</name>
+                <script>echo(&quot;[[Mapping Off]]\n&quot;)
 daagmap.isMapping = false</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mapoff$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Enable Mapping Mode</name>
-                    <script>echo(&quot;[[Mapping On]]\n&quot;)
+                <command></command>
+                <packageName></packageName>
+                <regex>^mapoff$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Enable Mapping Mode</name>
+                <script>echo(&quot;[[Mapping On]]\n&quot;)
 daagmap.isMapping = true</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mapon$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Find Room (look)</name>
-                    <script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^mapon$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Find Room (look)</name>
+                <script>
 daagmap:setRoomByLook(roomname, roomdesc)</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mfind$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Find Room (by id)</name>
-                    <script>daagmap:setRoomById(matches[2])</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mfind (\d+)$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Show Areas</name>
-                    <script>display(getAreaTable())</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>mshow</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Reset Area</name>
-                    <script>echo(matches[2])
+                <command></command>
+                <packageName></packageName>
+                <regex>^mfind$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Find Room (by id)</name>
+                <script>daagmap:setRoomById(matches[2])</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^mfind (\d+)$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Show Areas</name>
+                <script>display(getAreaTable())</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>mshow</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Reset Area</name>
+                <script>echo(matches[2])
 daagmap:resetArea(matches[2])</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>mresetarea (.*)</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Set Area</name>
-                    <script>daagmap.current_area = daagmap:setArea(matches[2])</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^msa (.*)</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Help!</name>
-                    <script>echo(&quot;[[----- Mapper Help -----]]\n\n&quot;)
+                <command></command>
+                <packageName></packageName>
+                <regex>mresetarea (.*)</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Set Area</name>
+                <script>daagmap.current_area = daagmap:setArea(matches[2])</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^msa (.*)</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Help!</name>
+                <script>echo(&quot;[[----- Mapper Help -----]]\n\n&quot;)
 echo(&quot;[]   General     []\n&quot;)
 echo(&quot;[mapon] - Enable Mapping Mode\n&quot;)
 echo(&quot;[mapoff] - Disable Mapping Mode\n&quot;)
@@ -290,54 +319,68 @@ echo(&quot;[&gt;portal&gt;direction] - Create an exit &lt;portal&gt; in &lt;dire
 echo(&quot;\n\n&quot;)
 
 </script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mhelp$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Move Current Room</name>
-                    <script>echo(matches[2])
+                <command></command>
+                <packageName></packageName>
+                <regex>^mhelp$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Move Current Room</name>
+                <script>echo(matches[2])
 daagmap:moveCurrentRoomToArea(matches[2])</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mma (\w+)$</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Merge Rooms</name>
-                    <script>daagmap:mergeRooms(matches[2], matches[3])</script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^mmerge (\d+) (\d+)</regex>
-                </Alias>
-                <Alias isActive="yes" isFolder="no">
-                    <name>Initalize</name>
-                    <script>doInit()
+                <command></command>
+                <packageName></packageName>
+                <regex>^mma (\w+)$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Merge Rooms</name>
+                <script>daagmap:mergeRooms(matches[2], matches[3])</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^mmerge (\d+) (\d+)</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Initalize</name>
+                <script>doInit()
 
 </script>
-                    <command></command>
-                    <packageName></packageName>
-                    <regex>^minit$</regex>
-                </Alias>
-            </AliasGroup>
+                <command></command>
+                <packageName></packageName>
+                <regex>^minit$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Delete Room</name>
+                <script>local room_to_del = matches[2]
+if tonumber(room_to_del) == daagmap.current_room then
+  echo(&quot;Please step out of the room to be deleted first.\n&quot;)
+else
+  deleteRoom(room_to_del)
+  centerview(daagmap.current_room)
+end</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^mdel (\d+)</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Manual Add Special Link</name>
+                <script>addSpecialExits(matches[2], matches[3], matches[4])</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^mlink (\d+) (\d+) (.*)$</regex>
+            </Alias>
         </AliasGroup>
     </AliasPackage>
     <ActionPackage/>
     <ScriptPackage>
         <ScriptGroup isActive="yes" isFolder="yes">
-            <name>3kmap</name>
-            <packageName>3kmap</packageName>
-            <script></script>
+            <name>mapper</name>
+            <packageName></packageName>
+            <script>
+</script>
             <eventHandlerList/>
-            <ScriptGroup isActive="yes" isFolder="yes">
-                <name>mapper</name>
+            <Script isActive="yes" isFolder="no">
+                <name>mapper_init</name>
                 <packageName></packageName>
                 <script>
-</script>
-                <eventHandlerList/>
-                <Script isActive="yes" isFolder="no">
-                    <name>mapper_init</name>
-                    <packageName></packageName>
-                    <script>
 
 function doInit()
 
@@ -366,134 +409,127 @@ function doInit()
   daagmap.isMapping = false
   daagmap.isSpecialMapping = false
 
+  daagmap.path = {}
+
   daagmap.current_room = 0
   daagmap.prior_room = 0
 
   expandAlias(&quot;mfind&quot;)
 
 end</script>
-                    <eventHandlerList/>
-                </Script>
-                <Script isActive="yes" isFolder="no">
-                    <name>onSysDataSendRequest</name>
-                    <packageName></packageName>
-                    <script>function onSysDataSendRequest(_, command)
+                <eventHandlerList/>
+            </Script>
+            <Script isActive="yes" isFolder="no">
+                <name>onSysDataSendRequest</name>
+                <packageName></packageName>
+                <script>function onSysDataSendRequest(_, command)
    daagmap.command = command
 	--isDirection(command, exittable)
 	--mapDirection(command)
 end
 </script>
-                    <eventHandlerList>
-                        <string>sysDataSendRequest</string>
-                    </eventHandlerList>
-                </Script>
-            </ScriptGroup>
+                <eventHandlerList>
+                    <string>sysDataSendRequest</string>
+                </eventHandlerList>
+            </Script>
         </ScriptGroup>
     </ScriptPackage>
     <KeyPackage>
         <KeyGroup isActive="yes" isFolder="yes">
-            <name>3kmap</name>
-            <packageName>3kmap</packageName>
+            <name>mapper</name>
+            <packageName></packageName>
             <script></script>
             <command></command>
-            <keyCode>59613704</keyCode>
-            <keyModifier>41488496</keyModifier>
-            <KeyGroup isActive="yes" isFolder="yes">
-                <name>mapper</name>
+            <keyCode>-1</keyCode>
+            <keyModifier>-1</keyModifier>
+            <Key isActive="yes" isFolder="no">
+                <name>east</name>
                 <packageName></packageName>
                 <script></script>
-                <command></command>
-                <keyCode>-1</keyCode>
-                <keyModifier>-1</keyModifier>
-                <Key isActive="yes" isFolder="no">
-                    <name>east</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>e</command>
-                    <keyCode>54</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>west</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>w</command>
-                    <keyCode>52</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>north</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>n</command>
-                    <keyCode>56</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>south</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>s</command>
-                    <keyCode>50</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>northwest</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>nw</command>
-                    <keyCode>55</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>northeast</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>ne</command>
-                    <keyCode>57</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>southwest</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>sw</command>
-                    <keyCode>49</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>southeast</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>se</command>
-                    <keyCode>51</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>up</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>u</command>
-                    <keyCode>45</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>down</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>d</command>
-                    <keyCode>43</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-                <Key isActive="yes" isFolder="no">
-                    <name>look</name>
-                    <packageName></packageName>
-                    <script></script>
-                    <command>look</command>
-                    <keyCode>53</keyCode>
-                    <keyModifier>536870912</keyModifier>
-                </Key>
-            </KeyGroup>
+                <command>e</command>
+                <keyCode>54</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>west</name>
+                <packageName></packageName>
+                <script></script>
+                <command>w</command>
+                <keyCode>52</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>north</name>
+                <packageName></packageName>
+                <script></script>
+                <command>n</command>
+                <keyCode>56</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>south</name>
+                <packageName></packageName>
+                <script></script>
+                <command>s</command>
+                <keyCode>50</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>northwest</name>
+                <packageName></packageName>
+                <script></script>
+                <command>nw</command>
+                <keyCode>55</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>northeast</name>
+                <packageName></packageName>
+                <script></script>
+                <command>ne</command>
+                <keyCode>57</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>southwest</name>
+                <packageName></packageName>
+                <script></script>
+                <command>sw</command>
+                <keyCode>49</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>southeast</name>
+                <packageName></packageName>
+                <script></script>
+                <command>se</command>
+                <keyCode>51</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>up</name>
+                <packageName></packageName>
+                <script></script>
+                <command>u</command>
+                <keyCode>45</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>down</name>
+                <packageName></packageName>
+                <script></script>
+                <command>d</command>
+                <keyCode>43</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
+            <Key isActive="yes" isFolder="no">
+                <name>look</name>
+                <packageName></packageName>
+                <script></script>
+                <command>look</command>
+                <keyCode>53</keyCode>
+                <keyModifier>536870912</keyModifier>
+            </Key>
         </KeyGroup>
     </KeyPackage>
 </MudletPackage>

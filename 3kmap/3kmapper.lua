@@ -1,6 +1,6 @@
 mudlet = mudlet or {}; mudlet.mapper_script = true
 
-function daagmap:doSpeedWalk()
+function doSpeedWalk()
 
   if #speedWalkPath == 0 then
     echo("No path from here to there!\n")
@@ -21,14 +21,20 @@ function daagmap:doSpeedWalk()
     end
     exits = daagmap:getAllExits(tonumber(room_id))
   end
-  display(path)
+  --display(path)
 
-  speedwalking = true
-  for k, v in ipairs(path) do
-    send(v)
-  --  followDirection(DIR_SHRINK[v])
+  daagmap.path = path
+  if daagmap.path[1] then
+    speedwalking = true
+    enableTrigger("walking")
+    disableTrigger("roomname")
+    local dirToSend = daagmap.path[1]
+    table.remove(daagmap.path, 1)
+    send(dirToSend) 
   end
-  speedwalking = false
+    
+  --  followDirection(DIR_SHRINK[v])
+  --speedwalking = false
   --tempTimer(3, [[send("look");expandAlias("mfind")]])
 
 end
@@ -59,8 +65,9 @@ end
 function daagmap:parseRoomName(roomname)
   --display(roomname)
 	local fixname = roomname
+  fixname = fixname:gsub("^> ", "")   -- When speedwalking, the roomname gets a prompt added
 	fixname = fixname:gsub("  %s+.?","")
-	fixname = fixname:gsub("%([%a+,?]+%)", "")
+	fixname = fixname:gsub("%([%a+,?]+%).?", "") -- Remove short exits
 	fixname = fixname:trim()
 	--echo("\n"..fixname)
 	return fixname
@@ -173,7 +180,7 @@ function daagmap:mergeRooms(top_room, bottom_room)
   end
 
   deleteRoom(top_room)
-  daagmap:setRoomById(current_room)
+  daagmap:setRoomById(daagmap.current_room)
 end
 
 
@@ -469,10 +476,23 @@ function daagmap:followDirection(dir)
 			daagmap:setMapToExistingRoom(existing_room)
 		end
 	end
+
 end
 
 function daagmap:setMapToExistingRoom(room_id)
-	if room_id and 
+  if speedwalking then
+    --display(roomname)
+    --display(getRoomName(room_id))
+    if getRoomName(room_id) == roomname then
+      daagmap:setRoomById(room_id)
+    else
+      echo("[[Speedwalk Aborted! Expected room not seen]]\n")
+      speedwalk = false
+      disableTrigger("walking")
+      enableTrigger("roomname")
+      daagmap.path = {}
+    end
+  elseif room_id and 
 	  getRoomName(room_id) == roomname and
 	  getRoomUserData(room_id, "description") == roomdesc then
 		--echo("[[setMapExisting: Moving to existing room "..room_id.."]]\n")
