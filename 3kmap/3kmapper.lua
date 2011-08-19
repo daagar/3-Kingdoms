@@ -1,4 +1,3 @@
-mudlet = mudlet or {}; mudlet.mapper_script = true
 
 function daagmap:forceLook()
   setRoomName(daagmap.current_room, roomname)
