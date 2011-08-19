@@ -1,5 +1,12 @@
 mudlet = mudlet or {}; mudlet.mapper_script = true
 
+function daagmap:forceLook()
+  setRoomName(daagmap.current_room, roomname)
+  setRoomUserData(daagmap.current_room, "description", roomdesc)
+  daagmap:createFakeExits(daagmap.current_room, exittable)
+  daagmap.isForcedLook = false
+end
+
 function doSpeedWalk()
 
   if #speedWalkPath == 0 then
@@ -209,17 +216,24 @@ function daagmap:createNewRoom(roomname, roomdesc, roomexits)
   local overlapping_room = daagmap:isRoomOverlapping(area_id, room_id)
 
   if overlapping_room then
-    --echo("Found overlapping room\n")
-   	if daagmap:isSameRoom(room_id, overlapping_room) then
+    echo("Found overlapping room\n")
+    -- When mapping special exits, we remove the newly created room as unneccessary
+    if daagmap:isSameRoom(room_id, overlapping_room) and daagmap.isSpecialMapping then
+      deleteRoom(room_id)
+			daagmap.current_x, daagmap.current_y, daagmap.current_z = getRoomCoordinates(overlapping_room)
+			daagmap.current_room = overlapping_room
+      centerview(overlapping_room)
+      return overlapping_room 
+    elseif daagmap:isSameRoom(room_id, overlapping_room) then
 
-			--echo(".. it is a duplicate room\n")
+			echo(".. it is a duplicate room\n")
 			daagmap:connectExitToHere(overlapping_room)
 			centerview(overlapping_room)
 			daagmap.current_x, daagmap.current_y, daagmap.current_z = getRoomCoordinates(overlapping_room)
 			daagmap.current_room = overlapping_room
       return overlapping_room
     else
-      --echo("Moving other rooms out of the way")
+      echo("Moving other rooms out of the way")
       daagmap:moveCollidingRooms(area_id)
 		end
   end
@@ -329,20 +343,14 @@ function daagmap:linkSpecialExit(move_command, dir)
 	--echo("Relative:"..x..y..z.."\n")
 	local t = getRoomsByPosition(getRoomArea(daagmap.current_room), daagmap.current_x+x, daagmap.current_y+y, daagmap.current_z+z)
 
+  -- A room should have already been created before calling this function
+  --assert(table.size(t) ~= 0, "(mapper): ERROR - Got an empty table in linkSpecialExit()\n")
+  if table.size(t) == 0 then
+    echo("(mapper): ERROR - Got an empty table in linkSpecialExit()\n")
+    return
+  end
+
 	--display(t)
-	-- 
-	if table.size(t) == 0 then
-		if not daagmap.isMapping then
-			echo("linkSE: Mapper Off! No room found in that direction to link to]]\n")
-			return
-		else
-			--send(move_command)
-			--mapDirection(dir)
-			--addSpecialExit(prior_room, current_room, move_command)
-			--currentview(current_room)
-			return
-		end
-	end
 
 	-- Oops, the map is messy - too many rooms stacked
 	if table.size(t) > 1 then
@@ -350,10 +358,13 @@ function daagmap:linkSpecialExit(move_command, dir)
 		return
 	end
 
-	-- Ah ha, there is already a room there. Link to it!
+	-- Link to the new room just created
 	local room_to_link = t[0]
 	addSpecialExit(room_to_link, daagmap.current_room, move_command)
+  --local t = getRoomExits(room_to_link)
+  --if getRoomArea(t[daagmap.DIR_OPPOSITE[dir]]) == daagmap.current_area then
 	setExit(room_to_link, -1, daagmap.DIR_OPPOSITE[dir])
+  --end
 	setExit(daagmap.current_room, -1, dir)
 	setRoomChar(daagmap.current_room, "_")
 	--echo("linkSE: Special exit added")
@@ -403,7 +414,6 @@ function daagmap:isSameRoom(source, destination)
 
 	return false
 end
-
 -- By creating rooms in a 'bogus' area, we can get exit arrows on rooms
 -- to show unexplored exits. 
 function daagmap:createFakeExits(room_id, seen_exits)
@@ -507,7 +517,7 @@ function daagmap:mapSpecialExit(dir)
   --display("dir passed in:" ..dir)
 
   if not daagmap:isCardinalDirection(dir) and newdir then
-    --echo("[[mapSpecial: Mapping "..special_exit.." to direction "..newdir.."]]\n")
+    echo("[[mapSpecial: Mapping "..special_exit.." to direction "..newdir.."]]\n")
     daagmap.command = newdir
     daagmap:mapDirection(newdir)
     daagmap:linkSpecialExit(special_exit, daagmap.DIR_OPPOSITE[newdir])
