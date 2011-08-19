@@ -1,9 +1,9 @@
 
-function daagmap:forceLook()
-  setRoomName(daagmap.current_room, roomname)
-  setRoomUserData(daagmap.current_room, "description", roomdesc)
-  daagmap:createFakeExits(daagmap.current_room, exittable)
-  daagmap.isForcedLook = false
+function daagar.map:forceLook()
+  setRoomName(daagar.map.current_room, roomname)
+  setRoomUserData(daagar.map.current_room, "description", roomdesc)
+  daagar.map:createFakeExits(daagar.map.current_room, exittable)
+  daagar.map.isForcedLook = false
 end
 
 function doSpeedWalk()
@@ -14,8 +14,8 @@ function doSpeedWalk()
   end
 
   --display(speedWalkPath)
-  daagmap.isMapping = false
-  local exits = daagmap:getAllExits(daagmap.current_room)
+  daagar.map.isMapping = false
+  local exits = daagar.map:getAllExits(daagar.map.current_room)
   local path = {}
   --display(exits)
   for i, room_id in pairs(speedWalkPath) do
@@ -25,17 +25,17 @@ function doSpeedWalk()
         break
       end
     end
-    exits = daagmap:getAllExits(tonumber(room_id))
+    exits = daagar.map:getAllExits(tonumber(room_id))
   end
   --display(path)
 
-  daagmap.path = path
-  if daagmap.path[1] then
+  daagar.map.path = path
+  if daagar.map.path[1] then
     speedwalking = true
     enableTrigger("walking")
     disableTrigger("roomname")
-    local dirToSend = daagmap.path[1]
-    table.remove(daagmap.path, 1)
+    local dirToSend = daagar.map.path[1]
+    table.remove(daagar.map.path, 1)
     send(dirToSend) 
   end
     
@@ -45,13 +45,13 @@ function doSpeedWalk()
 
 end
 
-function daagmap:getAllExits(room_id)
+function daagar.map:getAllExits(room_id)
    local exits = getRoomExits(room_id)
    local sexits = getSpecialExitsSwap(room_id)
-   return daagmap:concatTables(exits,sexits)
+   return daagar.map:concatTables(exits,sexits)
 end
 
-function daagmap:concatTables(table1, table2)
+function daagar.map:concatTables(table1, table2)
 	local output = {}
 	for i,v in pairs(table1) do
 		output[i] = v
@@ -68,7 +68,7 @@ end
 
 -- Clean up a room name of the form "Room Name (exit, exit, exit)      "
 -- to just "Room Name"
-function daagmap:parseRoomName(roomname)
+function daagar.map:parseRoomName(roomname)
   --display(roomname)
 	local fixname = roomname
   fixname = fixname:gsub("^> ", "")   -- When speedwalking, the roomname gets a prompt added
@@ -80,7 +80,7 @@ function daagmap:parseRoomName(roomname)
 end
 
 -- Take a full exit line and break it down to a table of actual exits
-function daagmap:parseExitLine(exitline)
+function daagar.map:parseExitLine(exitline)
 	local t = {}
 	exitline = exitline:trim()
 	exitline = exitline:gsub("There %w+ %w+ obvious exit.?:","")
@@ -98,16 +98,16 @@ function daagmap:parseExitLine(exitline)
 end
 
 -- Given a room id, set the map to that location
-function daagmap:setRoomById(room_id)
+function daagar.map:setRoomById(room_id)
 	centerview(room_id)
-	daagmap.current_x, daagmap.current_y, daagmap.current_z = getRoomCoordinates(room_id)
-	daagmap.current_room = room_id
-	daagmap.prior_room = room_id
-	daagmap.current_area = getRoomAreaName(getRoomArea(room_id))
+	daagar.map.current_x, daagar.map.current_y, daagar.map.current_z = getRoomCoordinates(room_id)
+	daagar.map.current_room = room_id
+	daagar.map.prior_room = room_id
+	daagar.map.current_area = getRoomAreaName(getRoomArea(room_id))
 end
 
 -- Given a roomname and roomdesc, attempt to find that room and move the map to it
-function daagmap:setRoomByLook(roomname, roomdesc)
+function daagar.map:setRoomByLook(roomname, roomdesc)
 	-- Try to find the room just by roomname alone
 	local all_rooms = getRooms()
 	local match_rooms = {}
@@ -124,7 +124,7 @@ function daagmap:setRoomByLook(roomname, roomdesc)
 		local desc = getRoomUserData(id, "description")
 		if desc == roomdesc then
 			echo("[[setRoombyLook: Found a match by description, moving map there]]\n")
-			daagmap:setRoomById(id)
+			daagar.map:setRoomById(id)
 			return
 		end
 	end
@@ -133,7 +133,7 @@ function daagmap:setRoomByLook(roomname, roomdesc)
 
 end
 
-function daagmap:mergeRooms(top_room, bottom_room)
+function daagar.map:mergeRooms(top_room, bottom_room)
   --assert(getRoomArea(top_room) == getRoomArea(bottom_room), "ERROR: Rooms must be located in the same area to merge")
   if getRoomArea(top_room) ~= getRoomArea(bottom_room) then
     echo("ERROR: Rooms must be located in the same area to merge\n")
@@ -147,11 +147,11 @@ function daagmap:mergeRooms(top_room, bottom_room)
 
   -- Remap all exits from the top room to the bottom room, excluding fake rooms
   for exit_dir, id in pairs(top_exits) do
-    exit_dir = daagmap:normalizeDirToShort(exit_dir)
-    if getRoomAreaName(getRoomArea(id)) == daagmap.current_area then
+    exit_dir = daagar.map:normalizeDirToShort(exit_dir)
+    if getRoomAreaName(getRoomArea(id)) == daagar.map.current_area then
       local other_room_exits = getRoomExits(id)
       --display(other_room_exits)
-      local opposite = daagmap:getOppositeDir(exit_dir)
+      local opposite = daagar.map:getOppositeDir(exit_dir)
       --echo("opposite)
       --echo("other id:"..other_room_exits[DIR_EXPAND[opposite]].."\n")
       setExit(id, bottom_room, opposite)
@@ -186,71 +186,71 @@ function daagmap:mergeRooms(top_room, bottom_room)
   end
 
   deleteRoom(top_room)
-  daagmap:setRoomById(daagmap.current_room)
+  daagar.map:setRoomById(daagar.map.current_room)
 end
 
 
-function daagmap:createNewRoom(roomname, roomdesc, roomexits)
+function daagar.map:createNewRoom(roomname, roomdesc, roomexits)
 
-	if daagmap.current_area == "" then
+	if daagar.map.current_area == "" then
 		echo("[[createNewRoom: No area set! Use 'setarea <name>' first.]]\n")
 		return
 	end
 
-	local area_id = daagmap:getAreaId(daagmap.current_area)
+	local area_id = daagar.map:getAreaId(daagar.map.current_area)
 	if area_id == nil then
 		echo("[[createNewRoom: Failed to find area id, room creation aborted]]\n")
 		return
 	end
 
-	daagmap.prior_room = daagmap.current_room
+	daagar.map.prior_room = daagar.map.current_room
 
 	-- Start creating a new room
 	local room_id = createRoomID()
 	addRoom(room_id)
 	setRoomName(room_id, roomname)
 	setRoomUserData(room_id, "description", roomdesc)
-	setRoomCoordinates(room_id, daagmap.current_x, daagmap.current_y, daagmap.current_z)
+	setRoomCoordinates(room_id, daagar.map.current_x, daagar.map.current_y, daagar.map.current_z)
 
-  local overlapping_room = daagmap:isRoomOverlapping(area_id, room_id)
+  local overlapping_room = daagar.map:isRoomOverlapping(area_id, room_id)
 
   if overlapping_room then
     echo("Found overlapping room\n")
     -- When mapping special exits, we remove the newly created room as unneccessary
-    if daagmap:isSameRoom(room_id, overlapping_room) and daagmap.isSpecialMapping then
+    if daagar.map:isSameRoom(room_id, overlapping_room) and daagar.map.isSpecialMapping then
       deleteRoom(room_id)
-			daagmap.current_x, daagmap.current_y, daagmap.current_z = getRoomCoordinates(overlapping_room)
-			daagmap.current_room = overlapping_room
+			daagar.map.current_x, daagar.map.current_y, daagar.map.current_z = getRoomCoordinates(overlapping_room)
+			daagar.map.current_room = overlapping_room
       centerview(overlapping_room)
       return overlapping_room 
-    elseif daagmap:isSameRoom(room_id, overlapping_room) then
+    elseif daagar.map:isSameRoom(room_id, overlapping_room) then
 
 			echo(".. it is a duplicate room\n")
-			daagmap:connectExitToHere(overlapping_room)
+			daagar.map:connectExitToHere(overlapping_room)
 			centerview(overlapping_room)
-			daagmap.current_x, daagmap.current_y, daagmap.current_z = getRoomCoordinates(overlapping_room)
-			daagmap.current_room = overlapping_room
+			daagar.map.current_x, daagar.map.current_y, daagar.map.current_z = getRoomCoordinates(overlapping_room)
+			daagar.map.current_room = overlapping_room
       return overlapping_room
     else
       echo("Moving other rooms out of the way")
-      daagmap:moveCollidingRooms(area_id)
+      daagar.map:moveCollidingRooms(area_id)
 		end
   end
 
- 	daagmap:connectExitToHere(room_id)
+ 	daagar.map:connectExitToHere(room_id)
 
   -- Otherwise, add it to the current area
-  daagmap.current_room = room_id
+  daagar.map.current_room = room_id
   setRoomArea(room_id, area_id)
 
-  daagmap:createFakeExits(room_id, roomexits)
+  daagar.map:createFakeExits(room_id, roomexits)
 
   --echo("[[createNewRoom: Created new room with id: "..room_id.."]]\n")
   centerview(room_id)
   return room_id 
  end
 
-function daagmap:moveCollidingRooms(area_id)
+function daagar.map:moveCollidingRooms(area_id)
     -- Move all rooms along the axis of movement away to make room for the new room. 
     local x_axis_pos = {"e"}
     local x_axis_neg = {"w"}
@@ -261,45 +261,45 @@ function daagmap:moveCollidingRooms(area_id)
 
     local rooms = getAreaRooms(area_id)
 
-    if table.contains(y_axis_pos, daagmap.command) then
+    if table.contains(y_axis_pos, daagar.map.command) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
-        if y >= daagmap.current_y then
+        if y >= daagar.map.current_y then
           setRoomCoordinates(id, x, y+2, z)
         end
       end
-    elseif table.contains(y_axis_neg, daagmap.command) then
+    elseif table.contains(y_axis_neg, daagar.map.command) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
-        if y <= daagmap.current_y then
+        if y <= daagar.map.current_y then
           setRoomCoordinates(id, x, y-2, z)
         end
       end
-    elseif table.contains(x_axis_pos, daagmap.command) then
+    elseif table.contains(x_axis_pos, daagar.map.command) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
-        if x >= daagmap.current_x then
+        if x >= daagar.map.current_x then
           setRoomCoordinates(id, x+2, y, z)
         end
       end
-    elseif table.contains(x_axis_neg, daagmap.command) then
+    elseif table.contains(x_axis_neg, daagar.map.command) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
-        if x <= daagmap.current_x then
+        if x <= daagar.map.current_x then
           setRoomCoordinates(id, x-2, y, z)
         end
       end
-    elseif table.contains(z_axis_pos, daagmap.command) then
+    elseif table.contains(z_axis_pos, daagar.map.command) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
-        if z >= daagmap.current_z then
+        if z >= daagar.map.current_z then
           setRoomCoordinates(id, x, y, z+2)
         end
       end
-    elseif table.contains(z_axis_neg, daagmap.command) then
+    elseif table.contains(z_axis_neg, daagar.map.command) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
-        if z <= daagmap.current_z then
+        if z <= daagar.map.current_z then
           setRoomCoordinates(id, x, y, z-2)
         end
       end
@@ -307,40 +307,40 @@ function daagmap:moveCollidingRooms(area_id)
 
 end
 
-function daagmap:connectExitToHere(room_id)
-	local direction = daagmap.command
+function daagar.map:connectExitToHere(room_id)
+	local direction = daagar.map.command
 
 	-- Make the bad assumption that exits will always be two way when
 	-- they are cardinal directions. 
-	local opposite_direction = daagmap:getOppositeDir(direction)
+	local opposite_direction = daagar.map:getOppositeDir(direction)
 	--echo("[[connectExit: Orig. direction: "..direction.." Opposite: "..opposite_direction.."]]\n")
 
 	-- If we don't know what our prior room was, bail
-	if(daagmap.prior_room == 0) then
+	if(daagar.map.prior_room == 0) then
 		echo("[[connectExit: No prior room defined, no exit creation.]]\n")
 		return
 	end
 
 	-- Is there already an exit connected?
 	--echo("[[connectExit:Prior room id: "..prior_room.."]]\n")
-	local t = getRoomExits(daagmap.prior_room)
+	local t = getRoomExits(daagar.map.prior_room)
 	if t[direction] == room_id then
 		--echo("[[connectExit: Room exit already found to here. No action.\n")
 	else
-		setExit(daagmap.prior_room, room_id, direction)
+		setExit(daagar.map.prior_room, room_id, direction)
 		--echo("[[connectExit: Set exit from prior room to here]]\n")
 	end
 
-	setExit(room_id, daagmap.prior_room, opposite_direction)
+	setExit(room_id, daagar.map.prior_room, opposite_direction)
 	--echo("[[connectExit: Set exit from here to prior room]]\n")
 end
 
-function daagmap:linkSpecialExit(move_command, dir)
+function daagar.map:linkSpecialExit(move_command, dir)
 
 	-- Find the room in <dir> direction
-	local x,y,z = daagmap:getRelativeCoords(dir)
+	local x,y,z = daagar.map:getRelativeCoords(dir)
 	--echo("Relative:"..x..y..z.."\n")
-	local t = getRoomsByPosition(getRoomArea(daagmap.current_room), daagmap.current_x+x, daagmap.current_y+y, daagmap.current_z+z)
+	local t = getRoomsByPosition(getRoomArea(daagar.map.current_room), daagar.map.current_x+x, daagar.map.current_y+y, daagar.map.current_z+z)
 
   -- A room should have already been created before calling this function
   --assert(table.size(t) ~= 0, "(mapper): ERROR - Got an empty table in linkSpecialExit()\n")
@@ -359,25 +359,25 @@ function daagmap:linkSpecialExit(move_command, dir)
 
 	-- Link to the new room just created
 	local room_to_link = t[0]
-	addSpecialExit(room_to_link, daagmap.current_room, move_command)
+	addSpecialExit(room_to_link, daagar.map.current_room, move_command)
   --local t = getRoomExits(room_to_link)
-  --if getRoomArea(t[daagmap.DIR_OPPOSITE[dir]]) == daagmap.current_area then
-	setExit(room_to_link, -1, daagmap.DIR_OPPOSITE[dir])
+  --if getRoomArea(t[daagar.map.DIR_OPPOSITE[dir]]) == daagar.map.current_area then
+	setExit(room_to_link, -1, daagar.map.DIR_OPPOSITE[dir])
   --end
-	setExit(daagmap.current_room, -1, dir)
-	setRoomChar(daagmap.current_room, "_")
+	setExit(daagar.map.current_room, -1, dir)
+	setRoomChar(daagar.map.current_room, "_")
 	--echo("linkSE: Special exit added")
 end
 
-function daagmap:isRoomOverlapping(area_id, new_room)
-  local t = getRoomsByPosition(area_id, daagmap.current_x, daagmap.current_y, daagmap.current_z)
+function daagar.map:isRoomOverlapping(area_id, new_room)
+  local t = getRoomsByPosition(area_id, daagar.map.current_x, daagar.map.current_y, daagar.map.current_z)
   if t then return t[0] else return false end -- t is nil on first room of area
 end
 
-function daagmap:checkDuplicateRoom(area_id, new_room)
+function daagar.map:checkDuplicateRoom(area_id, new_room)
 	-- WARNING: getRoomsByPosition starts indexing at 0, so we can't check
 	-- the array size with #t. Instead, we have to try pulling from it.
-	local t = getRoomsByPosition(area_id, daagmap.current_x, daagmap.current_y, daagmap.current_z)
+	local t = getRoomsByPosition(area_id, daagar.map.current_x, daagar.map.current_y, daagar.map.current_z)
 	--display(t)
 	--echo("Found # rooms at this spot: "..table.getn(t).."\n")
 	if t[0] then
@@ -389,12 +389,12 @@ function daagmap:checkDuplicateRoom(area_id, new_room)
 
 		-- Is it the same room?
 		local room_to_check = t[0]
-		if daagmap:isSameRoom(new_room, room_to_check) then
+		if daagar.map:isSameRoom(new_room, room_to_check) then
 			--echo("[[checkDupes: Duplicate room found in that direction, moving there]]\n")
-			daagmap:connectExitToHere(room_to_check)
+			daagar.map:connectExitToHere(room_to_check)
 			centerview(room_to_check)
-			daagmap.current_x, daagmap.current_y, daagmap.current_z = getRoomCoordinates(room_to_check)
-			daagmap.current_room = room_to_check
+			daagar.map.current_x, daagar.map.current_y, daagar.map.current_z = getRoomCoordinates(room_to_check)
+			daagar.map.current_room = room_to_check
 		end
 
 		return true
@@ -405,7 +405,7 @@ function daagmap:checkDuplicateRoom(area_id, new_room)
 end
 
 -- Compare two rooms by name and room description
-function daagmap:isSameRoom(source, destination)
+function daagar.map:isSameRoom(source, destination)
 	if getRoomName(source) == getRoomName(destination) and
 		getRoomUserData(source, "description") == getRoomUserData(destination, "description") then
 		return true
@@ -415,7 +415,7 @@ function daagmap:isSameRoom(source, destination)
 end
 -- By creating rooms in a 'bogus' area, we can get exit arrows on rooms
 -- to show unexplored exits. 
-function daagmap:createFakeExits(room_id, seen_exits)
+function daagar.map:createFakeExits(room_id, seen_exits)
 	local defined_exits = getRoomExits(room_id)
 	local seen_exits = seen_exits
 
@@ -429,12 +429,12 @@ function daagmap:createFakeExits(room_id, seen_exits)
 	-- With the exits that remain, create 'fake' exits so they show up on the map
 	-- as 'unexplored'
 	for id, dir in pairs(seen_exits) do
-		if table.contains(daagmap.DIR_LONG, dir) then
+		if table.contains(daagar.map.DIR_LONG, dir) then
 			local room_id = createRoomID()
 			addRoom(room_id)
-			setRoomName(room_id, tostring(room_id)..":"..daagmap.current_area)
-			setRoomArea(room_id, daagmap.fake_area)
-			setExit(daagmap.current_room, room_id, daagmap:normalizeDirToShort(dir))
+			setRoomName(room_id, tostring(room_id)..":"..daagar.map.current_area)
+			setRoomArea(room_id, daagar.map.fake_area)
+			setExit(daagar.map.current_room, room_id, daagar.map:normalizeDirToShort(dir))
 			--echo("[[fake: Created fake room "..room_id.." with exit from "..current_room.."]]\n")
 		else
 			setRoomChar(id, ">")
@@ -444,12 +444,12 @@ function daagmap:createFakeExits(room_id, seen_exits)
 
 end
 
-function daagmap:moveCurrentRoomToArea(area_name)
-  --assert(daagmap.current_room ~= 0, "ERROR: Don't know what room you are in!")
-  daagmap:moveRoomToArea(daagmap.current_room, area_name)
+function daagar.map:moveCurrentRoomToArea(area_name)
+  --assert(daagar.map.current_room ~= 0, "ERROR: Don't know what room you are in!")
+  daagar.map:moveRoomToArea(daagar.map.current_room, area_name)
 end
 
-function daagmap:moveRoomToArea(room_id, area_name)
+function daagar.map:moveRoomToArea(room_id, area_name)
  local areas = getAreaTable()
  if not table.contains(areas, area_name) then
    echo("[[mapper: ERROR - No such area!]]\n")
@@ -467,110 +467,110 @@ end
 ------------------------
 
 
-function daagmap:followDirection(dir)
-	if daagmap.current_room == 0 then return end
+function daagar.map:followDirection(dir)
+	if daagar.map.current_room == 0 then return end
 
 	-- If it is a normal compass direction...
-	if daagmap:isCardinalDirection(dir) then
-    daagmap:setNewCoordinates(dir)
-		local t = getRoomExits(daagmap.current_room)
-		local existing_room = t[daagmap:normalizeDirToLong(dir)]
-		daagmap:setMapToExistingRoom(existing_room)
+	if daagar.map:isCardinalDirection(dir) then
+    daagar.map:setNewCoordinates(dir)
+		local t = getRoomExits(daagar.map.current_room)
+		local existing_room = t[daagar.map:normalizeDirToLong(dir)]
+		daagar.map:setMapToExistingRoom(existing_room)
 	else
-		local t = getSpecialExitsSwap(daagmap.current_room)
+		local t = getSpecialExitsSwap(daagar.map.current_room)
 		local existing_room = t[dir]
 		--display(t)
 		if t and table.contains(t, dir) then
 			--echo("[[follow: Found known special exits]]\n")
-			daagmap:setMapToExistingRoom(existing_room)
+			daagar.map:setMapToExistingRoom(existing_room)
 		end
 	end
 
 end
 
-function daagmap:setMapToExistingRoom(room_id)
+function daagar.map:setMapToExistingRoom(room_id)
   if speedwalking then
     --display(roomname)
     --display(getRoomName(room_id))
     if getRoomName(room_id) == roomname then
-      daagmap:setRoomById(room_id)
+      daagar.map:setRoomById(room_id)
     else
       echo("[[Speedwalk Aborted! Expected room not seen]]\n")
       speedwalk = false
       disableTrigger("walking")
       enableTrigger("roomname")
-      daagmap.path = {}
+      daagar.map.path = {}
     end
   elseif room_id and 
 	  getRoomName(room_id) == roomname and
 	  getRoomUserData(room_id, "description") == roomdesc then
 		--echo("[[setMapExisting: Moving to existing room "..room_id.."]]\n")
-  	daagmap:setRoomById(room_id)
+  	daagar.map:setRoomById(room_id)
 	end
 end
 
 -- Attempt to map a special exit. Returns true if a new room is created as a result, otherwise false
-function daagmap:mapSpecialExit(dir)
+function daagar.map:mapSpecialExit(dir)
   local mapped_special = false
  	local special_exit, newdir = string.match(dir,">(.*)>(%w+)")
   --display("dir passed in:" ..dir)
 
-  if not daagmap:isCardinalDirection(dir) and newdir then
+  if not daagar.map:isCardinalDirection(dir) and newdir then
     echo("[[mapSpecial: Mapping "..special_exit.." to direction "..newdir.."]]\n")
-    daagmap.command = newdir
-    daagmap:mapDirection(newdir)
-    daagmap:linkSpecialExit(special_exit, daagmap.DIR_OPPOSITE[newdir])
+    daagar.map.command = newdir
+    daagar.map:mapDirection(newdir)
+    daagar.map:linkSpecialExit(special_exit, daagar.map.DIR_OPPOSITE[newdir])
     mapped_special = true
   end
-  daagmap.isSpecialMapping = false
+  daagar.map.isSpecialMapping = false
   return mapped_special
 end
 
-function daagmap:mapDirection(dir)
+function daagar.map:mapDirection(dir)
 	--echo("[[mapDir: Found command: "..dir .. "]]\n")
 
   -- If it is a special exit command, map it
-  --if daagmap:mapSpecialExit(dir) then return end
+  --if daagar.map:mapSpecialExit(dir) then return end
 
-  if daagmap.current_room == 0 then
+  if daagar.map.current_room == 0 then
 		echo("[[mapDir: Creating first room of area]]\n")
-		daagmap:createNewRoom(roomname, roomdesc, exittable)
+		daagar.map:createNewRoom(roomname, roomdesc, exittable)
     return
 	end
 
-  if not daagmap:isCardinalDirection(dir) then
-    daagmap:followDirection(dir)
+  if not daagar.map:isCardinalDirection(dir) then
+    daagar.map:followDirection(dir)
     return
   end
 
-  daagmap:setNewCoordinates(dir)
-	local t = getRoomExits(daagmap.current_room)
+  daagar.map:setNewCoordinates(dir)
+	local t = getRoomExits(daagar.map.current_room)
   --display(t)
-	local existing_room = t[daagmap.DIR_EXPAND[dir]]
+	local existing_room = t[daagar.map.DIR_EXPAND[dir]]
   --display(existing_room)
   if existing_room and getRoomAreaName(getRoomArea(existing_room)) ~= "fakeexitarea" then
     --echo("[[mapDir: Found an existing room at this exit: id: "..existing_room.."]]\n")
-	  daagmap:setRoomById(existing_room)
+	  daagar.map:setRoomById(existing_room)
   elseif existing_room and getRoomAreaName(getRoomArea(existing_room)) == "fakeexitarea" then
 	  deleteRoom(existing_room)
-	  daagmap:createNewRoom(roomname, roomdesc, exittable)
+	  daagar.map:createNewRoom(roomname, roomdesc, exittable)
   else
-    daagmap:createNewRoom(roomname, roomdesc, exittable)
+    daagar.map:createNewRoom(roomname, roomdesc, exittable)
   end
 
-  local t = getSpecialExitsSwap(daagmap.current_room)
+  local t = getSpecialExitsSwap(daagar.map.current_room)
 	local existing_room = t[dir]
 	--display(t)
 	if table.contains(t, dir) then
 		--echo("[[follow: Found known special exits]]\n")
-		daagmap:setMapToExistingRoom(existing_room)
+		daagar.map:setMapToExistingRoom(existing_room)
 	end
 end
 
 
 
 -- For a given direction, give the relative coordinates from "here"
-function daagmap:getRelativeCoords(direction)
+function daagar.map:getRelativeCoords(direction)
   --assert(isCardinalDirection(direction), "getRelativeCoords: Invalid direction "..direction.." provided\n")
   
 	--echo("[[getRelative: direction = "..direction.."]]\n")
@@ -597,22 +597,22 @@ function daagmap:getRelativeCoords(direction)
 	end
 end
 
-function daagmap:setLastCoordinates()
-	daagmap.last_x = daagmap.current_x
-	daagmap.last_y = daagmap.current_y
-	daagmap.last_z = daagmap.current_z
+function daagar.map:setLastCoordinates()
+	daagar.map.last_x = daagar.map.current_x
+	daagar.map.last_y = daagar.map.current_y
+	daagar.map.last_z = daagar.map.current_z
 end
 
-function daagmap:setNewCoordinates(direction)
+function daagar.map:setNewCoordinates(direction)
   --display(direction)
-    local direction = daagmap:normalizeDirToShort(direction)
-		daagmap:setLastCoordinates()
+    local direction = daagar.map:normalizeDirToShort(direction)
+		daagar.map:setLastCoordinates()
 
-		local x,y,z = daagmap:getRelativeCoords(direction)
+		local x,y,z = daagar.map:getRelativeCoords(direction)
 		--echo("[[newCoords: x, y, z: "..x..", "..y.." ,"..z.."]]\n")
-		daagmap.current_x = daagmap.current_x + x
-		daagmap.current_y = daagmap.current_y + y
-		daagmap.current_z = daagmap.current_z + z
+		daagar.map.current_x = daagar.map.current_x + x
+		daagar.map.current_y = daagar.map.current_y + y
+		daagar.map.current_z = daagar.map.current_z + z
 end
 
 

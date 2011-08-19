@@ -523,40 +523,38 @@ mudlet.mapper_script = true</script>
                         <script>
 
 function doInit()
-
-  if not daagmap then
-    daagmap = {}
-  end
+  daagar = daagar or {}
+  daagar.map = daagar or {}
 
   dofile(getMudletHomeDir()..&quot;/3kmap/areas.lua&quot;)
   dofile(getMudletHomeDir()..&quot;/3kmap/3kmapper.lua&quot;)
   dofile(getMudletHomeDir()..&quot;/3kmap/exits.lua&quot;)
 
-  daagmap.current_area = &quot;&quot;
-  daagmap.fake_area = daagmap:initFakeArea()
+  daagar.map.current_area = &quot;&quot;
+  daagar.map.fake_area = daagar.map:initFakeArea()
 
-  daagmap.current_x = 0
-  daagmap.current_y = 0
-  daagmap.current_z = 0
+  daagar.map.current_x = 0
+  daagar.map.current_y = 0
+  daagar.map.current_z = 0
 
-  daagmap.last_x = 0
-  daagmap.last_y = 0
-  daagmap.last_z = 0
+  daagar.map.last_x = 0
+  daagar.map.last_y = 0
+  daagar.map.last_z = 0
 
-  daagmap.command = &quot;&quot;
-  daagmap.specialCommand = &quot;&quot;
+  daagar.map.command = &quot;&quot;
+  daagar.map.specialCommand = &quot;&quot;
 
-  daagmap.isMapping = false
-  daagmap.isSpecialMapping = false
-  daagmap.isForcedLook = false
-  daagmap.isUnseen = false
+  daagar.map.isMapping = false
+  daagar.map.isSpecialMapping = false
+  daagar.map.isForcedLook = false
+  daagar.map.isUnseen = false
 
-  daagmap.path = {}
+  daagar.map.path = {}
 
-  daagmap.current_room = 0
-  daagmap.prior_room = 0
+  daagar.map.current_room = 0
+  daagar.map.prior_room = 0
 
-  daagmap.startup = true
+  daagar.map.startup = true
   send(&quot;look&quot;)
 
   --expandAlias(&quot;mfind&quot;)

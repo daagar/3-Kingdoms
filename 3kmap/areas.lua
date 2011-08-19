@@ -1,17 +1,10 @@
-
------------
--- Init --
------------
-
---fake_area = initFakeArea()
-
 --------------------
 -- Area Handling --
 --------------------
 
 -- Set the active area
 -- Returns the areaname on success, "" otherwise
-function daagmap:setArea(areaname)
+function daagar.map:setArea(areaname)
 	local t = getAreaTable()
 	--display(t)
 	if table.contains(t, areaname) then
@@ -25,7 +18,7 @@ function daagmap:setArea(areaname)
 end
 
 -- Return an id for the given area name, nil if area doesn't exist
-function daagmap:getAreaId(areaname)
+function daagar.map:getAreaId(areaname)
 	local t = getAreaTable()
 	local id = t[areaname]
 
@@ -40,8 +33,8 @@ function daagmap:getAreaId(areaname)
 end
 
 -- Remove all rooms in the given area
-function daagmap:resetArea(areaname)
-	local area_id = daagmap:getAreaId(areaname)
+function daagar.map:resetArea(areaname)
+	local area_id = daagar.map:getAreaId(areaname)
 --display(areaname)
 --display(area_id)
 
@@ -51,15 +44,15 @@ function daagmap:resetArea(areaname)
 			deleteRoom(v)
 		end
 
-		daagmap.prior_room = 0
-		daagmap.current_room = 0
+		daagar.map.prior_room = 0
+		daagar.map.current_room = 0
 		echo("[[resetArea: All rooms removed]]")
 	else
 		echo("[[resetArea: Invalid area - no rooms removed]]")
 	end
 end
 
-function daagmap:createArea(areaname)
+function daagar.map:createArea(areaname)
   local area_id = addAreaName(areaname)
 
   if area_id == -1 then
@@ -69,7 +62,7 @@ function daagmap:createArea(areaname)
   end
 end
 
-function daagmap:initFakeArea()
+function daagar.map:initFakeArea()
 	local fake_area_id = addAreaName("fakeexitarea")
 	if fake_area_id == -1 then
 		local t = getAreaTable()
