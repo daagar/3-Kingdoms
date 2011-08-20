@@ -63,11 +63,27 @@ function daagar.map:createArea(areaname)
 end
 
 function daagar.map:initFakeArea()
+  local room_id = -1
 	local fake_area_id = addAreaName("fakeexitarea")
 	if fake_area_id == -1 then
 		local t = getAreaTable()
 		fake_area_id = t["fakeexitarea"]
-	end
+  end
+
+  room_id = getAreaRooms(fake_area_id)[0] 
+  if room_id then
+    log:debug("Fake room already created: "..room_id)
+  else
+    log:debug("Creating initial room in 'fakeexitarea'")
+    room_id = createRoomID()
+	  addRoom(room_id)
+	  setRoomName(room_id, "Fake Room for exit mapping")
+	  setRoomUserData(room_id, "description", "Fake room for purposes of keeping track of unexplored exits")
+  	setRoomCoordinates(room_id, 0, 0, 0)
+    setRoomArea(room_id, fake_area_id)
+  end
+
+  daagar.map.fake_room_id = room_id
 	
 	return fake_area_id
 end

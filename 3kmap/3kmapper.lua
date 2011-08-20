@@ -162,8 +162,8 @@ function daagar.map:mergeRooms(top_room, bottom_room)
       setExit(id, bottom_room, opposite)
       setExit(bottom_room, id, exit_dir)
     else
-      -- It is a fake room, remove it
-      deleteRoom(id)
+      -- It is a fake room
+      --deleteRoom(id)
     end
   end
 
@@ -244,13 +244,12 @@ function daagar.map:createNewRoom(roomname, roomdesc, roomexits)
 
  	daagar.map:connectExitToHere(room_id)
 
-  -- Otherwise, add it to the current area
   daagar.map.current_room = room_id
   setRoomArea(room_id, area_id)
 
   daagar.map:createFakeExits(room_id, roomexits)
 
-  --echo("[[createNewRoom: Created new room with id: "..room_id.."]]\n")
+  log:debug("Created new room with id: "..room_id)
   centerview(room_id)
   return room_id 
  end
@@ -327,7 +326,7 @@ function daagar.map:connectExitToHere(room_id)
 	end
 
 	-- Is there already an exit connected?
-	log:debug("Prior room id: "..prior_room)
+	log:debug("Prior room id: "..daagar.map.prior_room)
 	local t = getRoomExits(daagar.map.prior_room)
 	if t[direction] == room_id then
 		log:debug("Room exit already found to here. No action for connecting exits.")
@@ -418,7 +417,8 @@ function daagar.map:isSameRoom(source, destination)
 
 	return false
 end
--- By creating rooms in a 'bogus' area, we can get exit arrows on rooms
+
+-- By linking to a room in a 'bogus' area, we can get exit arrows on rooms
 -- to show unexplored exits. 
 function daagar.map:createFakeExits(room_id, seen_exits)
 	local defined_exits = getRoomExits(room_id)
@@ -435,15 +435,15 @@ function daagar.map:createFakeExits(room_id, seen_exits)
 	-- as 'unexplored'
 	for id, dir in pairs(seen_exits) do
 		if table.contains(daagar.map.DIR_LONG, dir) then
-			local room_id = createRoomID()
-			addRoom(room_id)
-			setRoomName(room_id, tostring(room_id)..":"..daagar.map.current_area)
-			setRoomArea(room_id, daagar.map.fake_area)
-			setExit(daagar.map.current_room, room_id, daagar.map:normalizeDirToShort(dir))
-			--echo("[[fake: Created fake room "..room_id.." with exit from "..current_room.."]]\n")
+			--local room_id = createRoomID()
+			--addRoom(room_id)
+			--setRoomName(room_id, tostring(room_id)..":"..daagar.map.current_area)
+			--setRoomArea(room_id, daagar.map.fake_area)
+			setExit(daagar.map.current_room, daagar.map.fake_room_id, daagar.map:normalizeDirToShort(dir))
+			log:debug("Linked fake room with exit "..daagar.map:normalizeDirToShort(dir).." from "..daagar.map.current_room)
 		else
 			setRoomChar(id, ">")
-			--echo("[[fake: Created fake room character]]\n")
+			log:debug("Created fake room character")
 		end
 	end
 
@@ -557,10 +557,8 @@ function daagar.map:mapDirection(dir)
     --echo("[[mapDir: Found an existing room at this exit: id: "..existing_room.."]]\n")
 	  daagar.map:setRoomById(existing_room)
   elseif existing_room and getRoomAreaName(getRoomArea(existing_room)) == "fakeexitarea" then
-	  deleteRoom(existing_room)
+	  --deleteRoom(existing_room)
 	  daagar.map:createNewRoom(roomname, roomdesc, exittable)
-  else
-    daagar.map:createNewRoom(roomname, roomdesc, exittable)
   end
 
   local t = getSpecialExitsSwap(daagar.map.current_room)
