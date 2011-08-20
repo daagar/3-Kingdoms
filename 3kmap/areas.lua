@@ -8,10 +8,10 @@ function daagar.map:setArea(areaname)
 	local t = getAreaTable()
 	--display(t)
 	if table.contains(t, areaname) then
-		echo("[[setArea: Setting active area to '" .. areaname .. "']]\n")
+		log:info("Setting active area to '" .. areaname .. "'")
 		return areaname
 	else
-		echo("[[setArea: No such area as '"..areaname.."'. Please 'createarea' first]]\n")
+		log:error("No such area as '"..areaname.."'. Please 'createarea' first")
 	end
 
 	return ""

@@ -1,3 +1,8 @@
+----------------
+--  Init --
+--  ------------
+
+
 
 function daagar.map:forceLook()
   setRoomName(daagar.map.current_room, roomname)
@@ -9,7 +14,7 @@ end
 function doSpeedWalk()
 
   if #speedWalkPath == 0 then
-    echo("No path from here to there!\n")
+    log:info("No path from here to there!")
     return
   end
 
@@ -75,7 +80,7 @@ function daagar.map:parseRoomName(roomname)
 	fixname = fixname:gsub("  %s+.?","")
 	fixname = fixname:gsub("%([%a+,?]+%).?", "") -- Remove short exits
 	fixname = fixname:trim()
-	--echo("\n"..fixname)
+	log:info(fixname)
 	return fixname
 end
 
@@ -91,7 +96,7 @@ function daagar.map:parseExitLine(exitline)
 		t[k] = string.trim(v)
 	end
 
-	--echo("Cleaned exit line:" .. exitline)
+	log:info("Cleaned exit line:" .. exitline)
 	--display(t)
 
 	return t
@@ -452,12 +457,12 @@ end
 function daagar.map:moveRoomToArea(room_id, area_name)
  local areas = getAreaTable()
  if not table.contains(areas, area_name) then
-   echo("[[mapper: ERROR - No such area!]]\n")
+   log:error("(mapper) No such area!")
  end
 
  local area_id = areas[area_name]
  setRoomArea(room_id, area_id)
- expandAlias("mfind")
+ expandAlias("mfind",false)
 
 end
 
@@ -468,6 +473,7 @@ end
 
 
 function daagar.map:followDirection(dir)
+  log:info("In followDir()")
 	if daagar.map.current_room == 0 then return end
 
 	-- If it is a normal compass direction...
