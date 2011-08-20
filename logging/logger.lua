@@ -10,5 +10,5 @@ function daagar.log:info(msg)
 end
 
 function daagar.log:error(msg)
-  cecho("\n<dark_slate_grey>[[<firebrick_red>(ERROR):<light_grey> "..msg.." <dark_slate_grey>]]\n")
+  cecho("\n<dark_slate_grey>[[<firebrick>(ERROR):<light_grey> "..msg.." <dark_slate_grey>]]\n")
 end

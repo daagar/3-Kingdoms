@@ -507,9 +507,9 @@ function daagar.map:setMapToExistingRoom(room_id)
       daagar.map.path = {}
     end
   elseif room_id and 
-	  getRoomName(room_id) == roomname and
-	  getRoomUserData(room_id, "description") == roomdesc then
-		log:debug("Moving to existing room "..room_id)
+	  getRoomName(room_id) == roomname then 
+	  --getRoomUserData(room_id, "description") == roomdesc then
+		log:debug("Moving to existing room"..room_id)
   	daagar.map:setRoomById(room_id)
 	end
 end

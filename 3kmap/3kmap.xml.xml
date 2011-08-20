@@ -49,7 +49,7 @@
                     <regexCodePropertyList/>
                     <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="yes" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
                         <name>roomname</name>
-                        <script>roomname = matches[1]
+                        <script>roomname = matches[3]
 roomdesc = &quot;&quot;
 roomexits = &quot;&quot;
 
@@ -67,7 +67,7 @@ enableTrigger(&quot;roomexits&quot;)
                         <colorTriggerFgColor>#000000</colorTriggerFgColor>
                         <colorTriggerBgColor>#000000</colorTriggerBgColor>
                         <regexCodeList>
-                            <string>(.+)(\s+)?Ã</string>
+                            <string>((.+)(\s+)?Ã).+</string>
                         </regexCodeList>
                         <regexCodePropertyList>
                             <integer>1</integer>
@@ -213,6 +213,12 @@ end</script>
                         <name>walking</name>
                         <script>
 roomname = daagar.map:parseRoomName(matches[1])
+
+
+selectString(line, 1)
+fg(&quot;light_slate_blue&quot;)
+replace(&quot;&lt;&lt;&quot;..roomname..&quot;&gt;&gt;&quot;)
+
 daagar.map:followDirection(daagar.map.command)
 if daagar.map.path[1] then
   local dirToSend = daagar.map.path[1]
@@ -228,7 +234,7 @@ end</script>
                         <mStayOpen>0</mStayOpen>
                         <mCommand></mCommand>
                         <packageName></packageName>
-                        <mFgColor>#6d6d51</mFgColor>
+                        <mFgColor>#1d7b80</mFgColor>
                         <mBgColor>#000000</mBgColor>
                         <mSoundFile></mSoundFile>
                         <colorTriggerFgColor>#000000</colorTriggerFgColor>
@@ -272,6 +278,35 @@ daagar.map.isUnseen = false</script>
                         <colorTriggerBgColor>#000000</colorTriggerBgColor>
                         <regexCodeList>
                             <string>^It is too dark.$</string>
+                        </regexCodeList>
+                        <regexCodePropertyList>
+                            <integer>1</integer>
+                        </regexCodePropertyList>
+                    </Trigger>
+                    <Trigger isActive="yes" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="no" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
+                        <name>roomname_only</name>
+                        <script>if speedwalking then return end
+
+roomname = daagar.map:parseRoomName(matches[1])
+roomdesc = &quot;&quot;
+selectString(line, 1)
+fg(&quot;light_slate_blue&quot;)
+replace(&quot;&lt;&lt;&quot;..roomname..&quot;&gt;&gt;&quot;)
+
+log:debug(daagar.map.command)
+daagar.map:followDirection(daagar.map.command)</script>
+                        <triggerType>0</triggerType>
+                        <conditonLineDelta>3</conditonLineDelta>
+                        <mStayOpen>0</mStayOpen>
+                        <mCommand></mCommand>
+                        <packageName></packageName>
+                        <mFgColor>#116883</mFgColor>
+                        <mBgColor>#000000</mBgColor>
+                        <mSoundFile></mSoundFile>
+                        <colorTriggerFgColor>#000000</colorTriggerFgColor>
+                        <colorTriggerBgColor>#000000</colorTriggerBgColor>
+                        <regexCodeList>
+                            <string>(.+)(\s+)?Ã$</string>
                         </regexCodeList>
                         <regexCodePropertyList>
                             <integer>1</integer>
