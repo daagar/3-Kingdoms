@@ -80,7 +80,7 @@ function daagar.map:parseRoomName(roomname)
 	fixname = fixname:gsub("  %s+.?","")
 	fixname = fixname:gsub("%([%a+,?]+%).?", "") -- Remove short exits
 	fixname = fixname:trim()
-	log:info(fixname)
+	log:debug(fixname)
 	return fixname
 end
 
@@ -96,7 +96,7 @@ function daagar.map:parseExitLine(exitline)
 		t[k] = string.trim(v)
 	end
 
-	log:info("Cleaned exit line:" .. exitline)
+	log:debug("Cleaned exit line:" .. exitline)
 	--display(t)
 
 	return t
@@ -128,20 +128,20 @@ function daagar.map:setRoomByLook(roomname, roomdesc)
 	for id, name in pairs(match_rooms) do
 		local desc = getRoomUserData(id, "description")
 		if desc == roomdesc then
-			echo("[[setRoombyLook: Found a match by description, moving map there]]\n")
+			log:info("Found a match by description, moving map there")
 			daagar.map:setRoomById(id)
 			return
 		end
 	end
 
-	echo("[[setRoomByLook: Unable to find exact room match]]\n")
+	log:info("Unable to find exact room match")
 
 end
 
 function daagar.map:mergeRooms(top_room, bottom_room)
   --assert(getRoomArea(top_room) == getRoomArea(bottom_room), "ERROR: Rooms must be located in the same area to merge")
   if getRoomArea(top_room) ~= getRoomArea(bottom_room) then
-    echo("ERROR: Rooms must be located in the same area to merge\n")
+    log:error("Rooms must be located in the same area to merge")
     return
   end
 
@@ -198,13 +198,13 @@ end
 function daagar.map:createNewRoom(roomname, roomdesc, roomexits)
 
 	if daagar.map.current_area == "" then
-		echo("[[createNewRoom: No area set! Use 'setarea <name>' first.]]\n")
+		log:error("No area set! Use 'setarea <name>' first.")
 		return
 	end
 
 	local area_id = daagar.map:getAreaId(daagar.map.current_area)
 	if area_id == nil then
-		echo("[[createNewRoom: Failed to find area id, room creation aborted]]\n")
+		log:error("Failed to find area id, room creation aborted")
 		return
 	end
 
@@ -220,7 +220,7 @@ function daagar.map:createNewRoom(roomname, roomdesc, roomexits)
   local overlapping_room = daagar.map:isRoomOverlapping(area_id, room_id)
 
   if overlapping_room then
-    echo("Found overlapping room\n")
+    log:debug("Found overlapping room")
     -- When mapping special exits, we remove the newly created room as unneccessary
     if daagar.map:isSameRoom(room_id, overlapping_room) and daagar.map.isSpecialMapping then
       deleteRoom(room_id)
@@ -230,14 +230,14 @@ function daagar.map:createNewRoom(roomname, roomdesc, roomexits)
       return overlapping_room 
     elseif daagar.map:isSameRoom(room_id, overlapping_room) then
 
-			echo(".. it is a duplicate room\n")
+			log:debug(".. it is a duplicate room")
 			daagar.map:connectExitToHere(overlapping_room)
 			centerview(overlapping_room)
 			daagar.map.current_x, daagar.map.current_y, daagar.map.current_z = getRoomCoordinates(overlapping_room)
 			daagar.map.current_room = overlapping_room
       return overlapping_room
     else
-      echo("Moving other rooms out of the way")
+      log:debug("Moving other rooms out of the way")
       daagar.map:moveCollidingRooms(area_id)
 		end
   end
@@ -322,22 +322,22 @@ function daagar.map:connectExitToHere(room_id)
 
 	-- If we don't know what our prior room was, bail
 	if(daagar.map.prior_room == 0) then
-		echo("[[connectExit: No prior room defined, no exit creation.]]\n")
+		log:debug("No prior room defined, no exit creation.")
 		return
 	end
 
 	-- Is there already an exit connected?
-	--echo("[[connectExit:Prior room id: "..prior_room.."]]\n")
+	log:debug("Prior room id: "..prior_room)
 	local t = getRoomExits(daagar.map.prior_room)
 	if t[direction] == room_id then
-		--echo("[[connectExit: Room exit already found to here. No action.\n")
+		log:debug("Room exit already found to here. No action for connecting exits.")
 	else
 		setExit(daagar.map.prior_room, room_id, direction)
-		--echo("[[connectExit: Set exit from prior room to here]]\n")
+		log:debug("Set exit from prior room to here")
 	end
 
 	setExit(room_id, daagar.map.prior_room, opposite_direction)
-	--echo("[[connectExit: Set exit from here to prior room]]\n")
+	log:debug("Set exit from here to prior room")
 end
 
 function daagar.map:linkSpecialExit(move_command, dir)
@@ -350,7 +350,7 @@ function daagar.map:linkSpecialExit(move_command, dir)
   -- A room should have already been created before calling this function
   --assert(table.size(t) ~= 0, "(mapper): ERROR - Got an empty table in linkSpecialExit()\n")
   if table.size(t) == 0 then
-    echo("(mapper): ERROR - Got an empty table in linkSpecialExit()\n")
+    log:debug("Got an empty table in linkSpecialExit()")
     return
   end
 
@@ -358,7 +358,7 @@ function daagar.map:linkSpecialExit(move_command, dir)
 
 	-- Oops, the map is messy - too many rooms stacked
 	if table.size(t) > 1 then
-		echo("linkSE: Too many rooms in that location - please rearrange map]]\n")
+		log:error("Too many rooms in that location - please rearrange map")
 		return
 	end
 
@@ -371,7 +371,7 @@ function daagar.map:linkSpecialExit(move_command, dir)
   --end
 	setExit(daagar.map.current_room, -1, dir)
 	setRoomChar(daagar.map.current_room, "_")
-	--echo("linkSE: Special exit added")
+	log:debug("Special exit added")
 end
 
 function daagar.map:isRoomOverlapping(area_id, new_room)
@@ -388,7 +388,7 @@ function daagar.map:checkDuplicateRoom(area_id, new_room)
 	if t[0] then
 		-- Too many rooms overlapping?
 		if t[1] then
-			echo("[[checkDupes: Too many rooms overlapping - please adjust map]]\n")
+			log:error("Too many rooms overlapping - please adjust map")
 			return true
 		end
 
@@ -405,7 +405,7 @@ function daagar.map:checkDuplicateRoom(area_id, new_room)
 		return true
 	end
 
-	--echo("[[checkDupes: No duplicate room found at location]]\n")
+	log:debug("No duplicate room found at location")
 	return false
 end
 
@@ -473,7 +473,6 @@ end
 
 
 function daagar.map:followDirection(dir)
-  log:info("In followDir()")
 	if daagar.map.current_room == 0 then return end
 
 	-- If it is a normal compass direction...
@@ -487,7 +486,7 @@ function daagar.map:followDirection(dir)
 		local existing_room = t[dir]
 		--display(t)
 		if t and table.contains(t, dir) then
-			--echo("[[follow: Found known special exits]]\n")
+			log:debug("Found known special exits")
 			daagar.map:setMapToExistingRoom(existing_room)
 		end
 	end
@@ -501,7 +500,7 @@ function daagar.map:setMapToExistingRoom(room_id)
     if getRoomName(room_id) == roomname then
       daagar.map:setRoomById(room_id)
     else
-      echo("[[Speedwalk Aborted! Expected room not seen]]\n")
+      log:error("Speedwalk Aborted! Expected room not seen")
       speedwalk = false
       disableTrigger("walking")
       enableTrigger("roomname")
@@ -510,7 +509,7 @@ function daagar.map:setMapToExistingRoom(room_id)
   elseif room_id and 
 	  getRoomName(room_id) == roomname and
 	  getRoomUserData(room_id, "description") == roomdesc then
-		--echo("[[setMapExisting: Moving to existing room "..room_id.."]]\n")
+		log:debug("Moving to existing room "..room_id)
   	daagar.map:setRoomById(room_id)
 	end
 end
@@ -522,7 +521,7 @@ function daagar.map:mapSpecialExit(dir)
   --display("dir passed in:" ..dir)
 
   if not daagar.map:isCardinalDirection(dir) and newdir then
-    echo("[[mapSpecial: Mapping "..special_exit.." to direction "..newdir.."]]\n")
+    log:debug("Mapping "..special_exit.." to direction "..newdir)
     daagar.map.command = newdir
     daagar.map:mapDirection(newdir)
     daagar.map:linkSpecialExit(special_exit, daagar.map.DIR_OPPOSITE[newdir])
@@ -539,7 +538,7 @@ function daagar.map:mapDirection(dir)
   --if daagar.map:mapSpecialExit(dir) then return end
 
   if daagar.map.current_room == 0 then
-		echo("[[mapDir: Creating first room of area]]\n")
+		log:info("Creating first room of area")
 		daagar.map:createNewRoom(roomname, roomdesc, exittable)
     return
 	end

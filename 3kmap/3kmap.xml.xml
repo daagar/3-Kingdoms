@@ -170,27 +170,27 @@ enableTrigger(&quot;closeroom&quot;)</script>
                         <script>disableTrigger(&quot;roomexits&quot;)
 disableTrigger(&quot;closeroom&quot;)
 
-roomname = daagmap:parseRoomName(roomname)
-exittable = daagmap:parseExitLine(roomexits)
+roomname = daagar.map:parseRoomName(roomname)
+exittable = daagar.map:parseExitLine(roomexits)
 
-if daagmap.startup then
-  expandAlias(&quot;mfind&quot;)
-  daagmap.startup = false
+if daagar.map.startup then
+  expandAlias(&quot;mfind&quot;, false)
+  daagar.map.startup = false
 end
 
-if daagmap.isForcedLook then
-	daagmap:forceLook()
+if daagar.map.isForcedLook then
+	daagar.map:forceLook()
 	return
 end
 
-if daagmap.isMapping then
-  if daagmap.isSpecialMapping then
-    daagmap:mapSpecialExit(daagmap.specialCommand)
+if daagar.map.isMapping then
+  if daagar.map.isSpecialMapping then
+    daagar.map:mapSpecialExit(daagar.map.specialCommand)
   else
-	daagmap:mapDirection(daagmap.command)
+	daagar.map:mapDirection(daagar.map.command)
   end
 else
-	daagmap:followDirection(daagmap.command)
+	daagar.map:followDirection(daagar.map.command)
 end</script>
                         <triggerType>0</triggerType>
                         <conditonLineDelta>0</conditonLineDelta>
@@ -212,11 +212,11 @@ end</script>
                     <Trigger isActive="no" isFolder="no" isTempTrigger="no" isMultiline="no" isPerlSlashGOption="no" isColorizerTrigger="yes" isFilterTrigger="no" isSoundTrigger="no" isColorTrigger="no" isColorTriggerFg="no" isColorTriggerBg="no">
                         <name>walking</name>
                         <script>
-roomname = daagmap:parseRoomName(matches[1])
-daagmap:followDirection(daagmap.command)
-if daagmap.path[1] then
-  local dirToSend = daagmap.path[1]
-  table.remove(daagmap.path, 1)
+roomname = daagar.map:parseRoomName(matches[1])
+daagar.map:followDirection(daagar.map.command)
+if daagar.map.path[1] then
+  local dirToSend = daagar.map.path[1]
+  table.remove(daagar.map.path, 1)
   send(dirToSend)
 else
   enableTrigger(&quot;roomname&quot;)
@@ -247,19 +247,19 @@ roomdesc = &quot;Too dark.&quot;
 roomexits = &quot;&quot;
 exittable = {}
 
-daagmap.isUnseen = true
+daagar.map.isUnseen = true
 
-if daagmap.isMapping then
-  if daagmap.isSpecialMapping then
-    daagmap:mapSpecialExit(daagmap.specialCommand)
+if daagar.map.isMapping then
+  if daagar.map.isSpecialMapping then
+    daagar.map:mapSpecialExit(daagar.map.specialCommand)
   else
-	daagmap:mapDirection(daagmap.command)
+	daagar.map:mapDirection(daagar.map.command)
   end
 else
-	daagmap:followDirection(daagmap.command)
+	daagar.map:followDirection(daagar.map.command)
 end
 
-daagmap.isUnseen = false</script>
+daagar.map.isUnseen = false</script>
                         <triggerType>0</triggerType>
                         <conditonLineDelta>99</conditonLineDelta>
                         <mStayOpen>0</mStayOpen>
@@ -323,7 +323,7 @@ if r ~= nil then display(r) end</script>
                     <regex></regex>
                     <Alias isActive="yes" isFolder="no">
                         <name>Create New Area</name>
-                        <script>daagmap:createArea(matches[2])</script>
+                        <script>daagar.map:createArea(matches[2])</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mca (.*)$</regex>
@@ -331,8 +331,8 @@ if r ~= nil then display(r) end</script>
                     <Alias isActive="yes" isFolder="no">
                         <name>Link Special Exit</name>
                         <script>--send(matches[2])
-daagmap.isSpecialMapping = true
-daagmap.specialCommand = matches[1]
+daagar.map.isSpecialMapping = true
+daagar.map.specialCommand = matches[1]
 send(matches[2])
 --mapDirection(matches[1])</script>
                         <command></command>
@@ -341,16 +341,16 @@ send(matches[2])
                     </Alias>
                     <Alias isActive="yes" isFolder="no">
                         <name>Disable Mapping Mode</name>
-                        <script>echo(&quot;[[Mapping Off]]\n&quot;)
-daagmap.isMapping = false</script>
+                        <script>log:info(&quot;Mapping Off&quot;)
+daagar.map.isMapping = false</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mapoff$</regex>
                     </Alias>
                     <Alias isActive="yes" isFolder="no">
                         <name>Enable Mapping Mode</name>
-                        <script>echo(&quot;[[Mapping On]]\n&quot;)
-daagmap.isMapping = true</script>
+                        <script>log:info(&quot;Mapping On&quot;)
+daagar.map.isMapping = true</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mapon$</regex>
@@ -358,14 +358,14 @@ daagmap.isMapping = true</script>
                     <Alias isActive="yes" isFolder="no">
                         <name>Find Room (look)</name>
                         <script>
-daagmap:setRoomByLook(roomname, roomdesc)</script>
+daagar.map:setRoomByLook(roomname, roomdesc)</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mfind$</regex>
                     </Alias>
                     <Alias isActive="yes" isFolder="no">
                         <name>Find Room (by id)</name>
-                        <script>daagmap:setRoomById(matches[2])</script>
+                        <script>daagar.map:setRoomById(matches[2])</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mfind (\d+)$</regex>
@@ -380,14 +380,14 @@ daagmap:setRoomByLook(roomname, roomdesc)</script>
                     <Alias isActive="yes" isFolder="no">
                         <name>Reset Area</name>
                         <script>echo(matches[2])
-daagmap:resetArea(matches[2])</script>
+daagar.map:resetArea(matches[2])</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>mresetarea (.*)</regex>
                     </Alias>
                     <Alias isActive="yes" isFolder="no">
                         <name>Set Area</name>
-                        <script>daagmap.current_area = daagmap:setArea(matches[2])</script>
+                        <script>daagar.map.current_area = daagar.map:setArea(matches[2])</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^msa (.*)</regex>
@@ -417,14 +417,14 @@ echo(&quot;\n\n&quot;)
                     <Alias isActive="yes" isFolder="no">
                         <name>Move Current Room</name>
                         <script>echo(matches[2])
-daagmap:moveCurrentRoomToArea(matches[2])</script>
+daagar.map:moveCurrentRoomToArea(matches[2])</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mma (.*)$</regex>
                     </Alias>
                     <Alias isActive="yes" isFolder="no">
                         <name>Merge Rooms</name>
-                        <script>daagmap:mergeRooms(matches[2], matches[3])</script>
+                        <script>daagar.map:mergeRooms(matches[2], matches[3])</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mmerge (\d+) (\d+)</regex>
@@ -441,11 +441,11 @@ daagmap:moveCurrentRoomToArea(matches[2])</script>
                     <Alias isActive="yes" isFolder="no">
                         <name>Delete Room</name>
                         <script>local room_to_del = matches[2]
-if tonumber(room_to_del) == daagmap.current_room then
-  echo(&quot;Please step out of the room to be deleted first.\n&quot;)
+if tonumber(room_to_del) == daagar.map.current_room then
+  log:error(&quot;Please step out of the room to be deleted first.&quot;)
 else
   deleteRoom(room_to_del)
-  centerview(daagmap.current_room)
+  centerview(daagar.map.current_room)
 end</script>
                         <command></command>
                         <packageName></packageName>
@@ -460,8 +460,8 @@ end</script>
                     </Alias>
                     <Alias isActive="yes" isFolder="no">
                         <name>Force look</name>
-                        <script>daagmap.isForcedLook = true
-send(&quot;look&quot;)</script>
+                        <script>daagar.map.isForcedLook = true
+send(&quot;look&quot;,false)</script>
                         <command></command>
                         <packageName></packageName>
                         <regex>^mlook$</regex>
@@ -489,6 +489,13 @@ send(&quot;look&quot;)</script>
                     <regex>^rr$</regex>
                 </Alias>
             </AliasGroup>
+            <Alias isActive="yes" isFolder="no">
+                <name></name>
+                <script></script>
+                <command></command>
+                <packageName></packageName>
+                <regex></regex>
+            </Alias>
         </AliasGroup>
         <Alias isActive="yes" isFolder="no">
             <name>rooms</name>
@@ -496,6 +503,22 @@ send(&quot;look&quot;)</script>
             <command></command>
             <packageName></packageName>
             <regex>^rooms$</regex>
+        </Alias>
+        <Alias isActive="yes" isFolder="no">
+            <name>debugon</name>
+            <script>daagar.log.enableDebug = true
+log:info(&quot;Debug Logging On&quot;)</script>
+            <command></command>
+            <packageName></packageName>
+            <regex>^debugon$</regex>
+        </Alias>
+        <Alias isActive="yes" isFolder="no">
+            <name>debugoff</name>
+            <script>daagar.log.enableDebug = false
+log:info(&quot;Debug Logging Off&quot;)</script>
+            <command></command>
+            <packageName></packageName>
+            <regex>^debugoff$</regex>
         </Alias>
     </AliasPackage>
     <ActionPackage/>
@@ -554,10 +577,9 @@ function doInit()
   daagar.map.current_room = 0
   daagar.map.prior_room = 0
 
+  daagar.log:info(&quot;Mapper initalized. Finding starting location&quot;)
   daagar.map.startup = true
-  send(&quot;look&quot;)
-
-  --expandAlias(&quot;mfind&quot;)
+  send(&quot;look&quot;,false)
 
 end</script>
                         <eventHandlerList/>
@@ -566,9 +588,7 @@ end</script>
                         <name>onSysDataSendRequest</name>
                         <packageName></packageName>
                         <script>function onSysDataSendRequest(_, command)
-   daagmap.command = command
-	--isDirection(command, exittable)
-	--mapDirection(command)
+   daagar.map.command = command
 end
 </script>
                         <eventHandlerList>
@@ -577,6 +597,32 @@ end
                     </Script>
                 </ScriptGroup>
             </ScriptGroup>
+        </ScriptGroup>
+        <ScriptGroup isActive="yes" isFolder="yes">
+            <name>logging</name>
+            <packageName></packageName>
+            <script>
+</script>
+            <eventHandlerList/>
+            <Script isActive="yes" isFolder="no">
+                <name>onSysLoadEvent</name>
+                <packageName></packageName>
+                <script>function onSysLoadEvent(event, args)
+  
+   daagar = daagar or {}
+   daagar.log = daagar.log or {}
+
+log = daagar.log
+
+   dofile(getMudletHomeDir()..&quot;/logging/logger.lua&quot;)
+
+   daagar.log.enableDebug = false
+end
+</script>
+                <eventHandlerList>
+                    <string>sysLoadEvent</string>
+                </eventHandlerList>
+            </Script>
         </ScriptGroup>
     </ScriptPackage>
     <KeyPackage>

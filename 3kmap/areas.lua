@@ -46,9 +46,9 @@ function daagar.map:resetArea(areaname)
 
 		daagar.map.prior_room = 0
 		daagar.map.current_room = 0
-		echo("[[resetArea: All rooms removed]]")
+		log:info("All rooms removed")
 	else
-		echo("[[resetArea: Invalid area - no rooms removed]]")
+		log:error("Invalid area - no rooms removed")
 	end
 end
 
@@ -56,9 +56,9 @@ function daagar.map:createArea(areaname)
   local area_id = addAreaName(areaname)
 
   if area_id == -1 then
-    echo("[[createArea: Area name already exists!]]\n")
+    log:error("Area name already exists!")
   else
-    echo("[[createArea: New area created with id "..area_id.."]]\n")
+    log:info("New area created with id "..area_id)
   end
 end
 
