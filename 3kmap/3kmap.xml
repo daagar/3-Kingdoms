@@ -67,7 +67,7 @@ enableTrigger(&quot;roomexits&quot;)
                         <colorTriggerFgColor>#000000</colorTriggerFgColor>
                         <colorTriggerBgColor>#000000</colorTriggerBgColor>
                         <regexCodeList>
-                            <string>((.+)(\s+)?Ã).+</string>
+                            <string>((.+)(\s+)?~).+</string>
                         </regexCodeList>
                         <regexCodePropertyList>
                             <integer>1</integer>
@@ -240,7 +240,7 @@ end</script>
                         <colorTriggerFgColor>#000000</colorTriggerFgColor>
                         <colorTriggerBgColor>#000000</colorTriggerBgColor>
                         <regexCodeList>
-                            <string>(.+)(\s+)?Ã</string>
+                            <string>(.+)(\s+)?~</string>
                         </regexCodeList>
                         <regexCodePropertyList>
                             <integer>1</integer>
@@ -306,7 +306,7 @@ daagar.map:followDirection(daagar.map.command)</script>
                         <colorTriggerFgColor>#000000</colorTriggerFgColor>
                         <colorTriggerBgColor>#000000</colorTriggerBgColor>
                         <regexCodeList>
-                            <string>(.+)(\s+)?Ã$</string>
+                            <string>(.+)(\s+)?~$</string>
                         </regexCodeList>
                         <regexCodePropertyList>
                             <integer>1</integer>
@@ -501,6 +501,13 @@ send(&quot;look&quot;,false)</script>
                         <packageName></packageName>
                         <regex>^mlook$</regex>
                     </Alias>
+                    <Alias isActive="yes" isFolder="no">
+                        <name>Save Map</name>
+                        <script>saveMap(getMudletHomeDir()..&quot;/3kmapdata.dat&quot;)</script>
+                        <command></command>
+                        <packageName></packageName>
+                        <regex>^msave$</regex>
+                    </Alias>
                 </AliasGroup>
             </AliasGroup>
             <AliasGroup isActive="yes" isFolder="yes">
@@ -584,9 +591,9 @@ function doInit()
   daagar = daagar or {}
   daagar.map = daagar or {}
 
-  dofile(getMudletHomeDir()..&quot;/3kmap/areas.lua&quot;)
-  dofile(getMudletHomeDir()..&quot;/3kmap/3kmapper.lua&quot;)
-  dofile(getMudletHomeDir()..&quot;/3kmap/exits.lua&quot;)
+  dofile(getMudletHomeDir()..&quot;/scripts/3kmap/areas.lua&quot;)
+  dofile(getMudletHomeDir()..&quot;/scripts/3kmap/3kmapper.lua&quot;)
+  dofile(getMudletHomeDir()..&quot;/scripts/3kmap/exits.lua&quot;)
 
   daagar.map.current_area = &quot;&quot;
   daagar.map.fake_area = daagar.map:initFakeArea()
@@ -649,7 +656,7 @@ end
 
 log = daagar.log
 
-   dofile(getMudletHomeDir()..&quot;/logging/logger.lua&quot;)
+   dofile(getMudletHomeDir()..&quot;/scripts/logging/logger.lua&quot;)
 
    daagar.log.enableDebug = false
 end

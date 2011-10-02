@@ -327,7 +327,7 @@ function daagar.map:connectExitToHere(room_id)
 	end
 
 	-- Is there already an exit connected?
-	log:debug("Prior room id: "..prior_room)
+	log:debug("Prior room id: "..daagar.map.prior_room)
 	local t = getRoomExits(daagar.map.prior_room)
 	if t[direction] == room_id then
 		log:debug("Room exit already found to here. No action for connecting exits.")
