@@ -1,5 +1,6 @@
-daagar.map.DIR_SHORT = {"n", "s", "e", "w", "ne", "nw", "se", "sw", "u", "d"}
-daagar.map.DIR_LONG = {"north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "up", "down"}
+daagar.map.DIR_SHORT = {"n", "ne", "nw", "e", "w", "s", "se", "sw", "u", "d"}
+daagar.map.DIR_LONG = {"north", "northeast", "northwest", "east", "west", "south", "southeast", "southwest", "up", "down"}
+
 
 daagar.map.DIR_SHRINK = {
   ["north"]="n", 
