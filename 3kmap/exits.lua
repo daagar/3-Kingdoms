@@ -45,9 +45,9 @@ function daagar.map:isCardinalDirection(command)
   local is_cardinal = false
 
 	-- If it is a 'short' direction, spell it out (ie., s = south)
-	daagar.map.command = daagar.map:normalizeDirToShort(daagar.map.command)
+	command = daagar.map:normalizeDirToShort(command)
 	--echo("[[isCardinal: normalized command: "..command.."]]\n")
-	if table.contains(daagar.map.DIR_SHORT,daagar.map.command) then
+	if table.contains(daagar.map.DIR_SHORT,command) then
 	  is_cardinal = true	
 	end
 

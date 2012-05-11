@@ -90,12 +90,11 @@ disableTrigger(&quot;spacer&quot;)</script>
                 <script>
 roomname = daagar.map:parseRoomName(matches[1])
 
-
 selectString(line, 1)
 fg(&quot;light_slate_blue&quot;)
 replace(&quot;&lt;&lt;&quot;..roomname..&quot;&gt;&gt;&quot;)
 
-daagar.map:followDirection(daagar.map.command)
+daagar.map:followDirection(getDirectionMoved())
 if daagar.map.path[1] then
   local dirToSend = daagar.map.path[1]
   table.remove(daagar.map.path, 1)
@@ -135,10 +134,10 @@ if daagar.map.isMapping then
   if daagar.map.isSpecialMapping then
     daagar.map:mapSpecialExit(daagar.map.specialCommand)
   else
-	daagar.map:mapDirection(daagar.map.command)
+	daagar.map:mapDirection(getDirectionMoved())
   end
 else
-	daagar.map:followDirection(daagar.map.command)
+	daagar.map:followDirection(getDirectionMoved())
 end
 
 daagar.map.isUnseen = false</script>
@@ -169,8 +168,9 @@ selectString(line, 1)
 fg(&quot;light_slate_blue&quot;)
 replace(&quot;&lt;&lt;&quot;..roomname..&quot;&gt;&gt;&quot;)
 
-log:debug(daagar.map.command)
-daagar.map:followDirection(daagar.map.command)</script>
+
+log:debug(dirToMove)
+daagar.map:followDirection(getDirectionMoved())</script>
                 <triggerType>0</triggerType>
                 <conditonLineDelta>3</conditonLineDelta>
                 <mStayOpen>0</mStayOpen>
@@ -194,6 +194,7 @@ daagar.map:followDirection(daagar.map.command)</script>
 
 if (matches[6]) then
   if (string.find(matches[6],&quot;§&quot;)) then
+	--send(&quot;\n&quot;)
     local match = matches[6]
     roomexits=string.trim(string.sub(match,1,string.find(match,&quot;§&quot;)-2))
     disableTrigger(&quot;multiple_room_exits&quot;)
@@ -231,7 +232,6 @@ disableTrigger(&quot;roomexits&quot;)</script>
 if (match and string.find(match,&quot;§&quot;)) then
   roomexits=roomexits..string.trim(string.sub(match,1,string.find(match,&quot;§&quot;)-2))
   disableTrigger(&quot;multiple_room_exits&quot;)
-  --enableTrigger(&quot;closeroom&quot;)
   process_room()
 else
   roomexits=roomexits..match
@@ -344,7 +344,7 @@ daagar.map:setRoomByLook(roomname, roomdesc)</script>
             </Alias>
             <Alias isActive="yes" isFolder="no">
                 <name>Reset Area</name>
-                <script>echo(matches[2])
+                <script>--echo(matches[2])
 daagar.map:resetArea(matches[2])</script>
                 <command></command>
                 <packageName></packageName>
@@ -432,11 +432,18 @@ send(&quot;look&quot;,false)</script>
                 <regex>^mlook$</regex>
             </Alias>
             <Alias isActive="yes" isFolder="no">
-                <name>Save Map</name>
+                <name>Save Map (3S)</name>
+                <script>saveMap(getMudletHomeDir()..&quot;/3smapdata.dat&quot;)</script>
+                <command></command>
+                <packageName></packageName>
+                <regex>^msave3s$</regex>
+            </Alias>
+            <Alias isActive="yes" isFolder="no">
+                <name>Save Map (3K)</name>
                 <script>saveMap(getMudletHomeDir()..&quot;/3kmapdata.dat&quot;)</script>
                 <command></command>
                 <packageName></packageName>
-                <regex>^msave$</regex>
+                <regex>^msave3k$</regex>
             </Alias>
         </AliasGroup>
         <AliasGroup isActive="yes" isFolder="yes">
@@ -510,7 +517,7 @@ function doInit()
   dofile(&quot;g:/dev/3-kingdoms/3kmap/exits.lua&quot;)
 
   daagar.map.current_area = &quot;&quot;
-  --daagar.map.fake_area = daagar.map:initFakeArea()
+  daagar.map.fake_area = daagar.map:initFakeArea()
 
   daagar.map.current_x = 0
   daagar.map.current_y = 0
@@ -520,8 +527,9 @@ function doInit()
   daagar.map.last_y = 0
   daagar.map.last_z = 0
 
-  daagar.map.command = &quot;&quot;
+  daagar.map.command = {}
   daagar.map.specialCommand = &quot;&quot;
+  daagar.map.dir = &quot;&quot;
 
   daagar.map.isMapping = false
   daagar.map.isSpecialMapping = false
@@ -544,7 +552,8 @@ end</script>
                 <name>onSysDataSendRequest</name>
                 <packageName></packageName>
                 <script>function onSysDataSendRequest(_, command)
-   daagar.map.command = command
+   table.insert(daagar.map.command, command)
+--echo(&quot;onSys:&quot;..display(daagar.map.command))
 end
 </script>
                 <eventHandlerList>
@@ -556,32 +565,61 @@ end
                 <packageName></packageName>
                 <script>function process_room()
 
-disableTrigger(&quot;roomexits&quot;)
---disableTrigger(&quot;closeroom&quot;)
+	disableTrigger(&quot;roomexits&quot;)
+	--disableTrigger(&quot;closeroom&quot;)
 
-roomname = daagar.map:parseRoomName(roomname)
-exittable = daagar.map:parseExitLine(roomexits)
+	roomname = daagar.map:parseRoomName(roomname)
+	exittable = daagar.map:parseExitLine(roomexits)
 
-if daagar.map.startup then
-  expandAlias(&quot;mfind&quot;, false)
-  daagar.map.startup = false
+	if daagar.map.startup then
+  		expandAlias(&quot;mfind&quot;, false)
+  		daagar.map.startup = false
+	end
+
+	if daagar.map.isForcedLook then
+		daagar.map:forceLook()
+		return
+	end
+
+	if daagar.map.isMapping then
+  		if daagar.map.isSpecialMapping then
+			daagar.map:mapSpecialExit(getDirectionMoved())
+  		else
+			daagar.map:mapDirection(getDirectionMoved())
+  		end
+	else
+		daagar.map:followDirection(getDirectionMoved())
+	end
+
 end
 
-if daagar.map.isForcedLook then
-	daagar.map:forceLook()
-	return
-end
+function getDirectionMoved()
+	daagar.map.dir = nil
 
-if daagar.map.isMapping then
-  if daagar.map.isSpecialMapping then
-    daagar.map:mapSpecialExit(daagar.map.specialCommand)
-  else
-	daagar.map:mapDirection(daagar.map.command)
-  end
-else
-	daagar.map:followDirection(daagar.map.command)
-end
+	while daagar.map.dir == nil do
+		if #daagar.map.command == 0 then
+			daagar.log:debug(&quot;Command queue empty, didn't move&quot;)
+			break
+		end
 
+		local command = daagar.map.command[1]
+		table.remove (daagar.map.command, 1)
+
+		if (daagar.map:isCardinalDirection(command)) then
+	    	daagar.log:debug(&quot;Found cardinal direction: &quot;..command)
+			daagar.map.dir = command
+		elseif (table.contains(getSpecialExitsSwap(daagar.map.current_room), command)) then
+			daagar.log:debug(&quot;Found existing special exit: &quot;..command)
+			daagar.map.dir=command
+		end
+
+		if (string.match(daagar.map.specialCommand,&quot;&gt;(.*)&gt;(%w+)&quot;) == command) then
+			daagar.log:debug(&quot;Found special exit command: &quot;..command)
+			daagar.map.dir = daagar.map.specialCommand
+		end
+	end
+
+	return daagar.map.dir
 end</script>
                 <eventHandlerList/>
             </Script>

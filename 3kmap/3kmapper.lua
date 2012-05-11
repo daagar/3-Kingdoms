@@ -266,42 +266,42 @@ function daagar.map:moveCollidingRooms(area_id)
 
     local rooms = getAreaRooms(area_id)
 
-    if table.contains(y_axis_pos, daagar.map.command) then
+    if table.contains(y_axis_pos, daagar.map.dir) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
         if y >= daagar.map.current_y then
           setRoomCoordinates(id, x, y+2, z)
         end
       end
-    elseif table.contains(y_axis_neg, daagar.map.command) then
+    elseif table.contains(y_axis_neg, daagar.map.dir) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
         if y <= daagar.map.current_y then
           setRoomCoordinates(id, x, y-2, z)
         end
       end
-    elseif table.contains(x_axis_pos, daagar.map.command) then
+    elseif table.contains(x_axis_pos, daagar.map.dir) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
         if x >= daagar.map.current_x then
           setRoomCoordinates(id, x+2, y, z)
         end
       end
-    elseif table.contains(x_axis_neg, daagar.map.command) then
+    elseif table.contains(x_axis_neg, daagar.map.dir) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
         if x <= daagar.map.current_x then
           setRoomCoordinates(id, x-2, y, z)
         end
       end
-    elseif table.contains(z_axis_pos, daagar.map.command) then
+    elseif table.contains(z_axis_pos, daagar.map.dir) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
         if z >= daagar.map.current_z then
           setRoomCoordinates(id, x, y, z+2)
         end
       end
-    elseif table.contains(z_axis_neg, daagar.map.command) then
+    elseif table.contains(z_axis_neg, daagar.map.dir) then
       for name, id in pairs(rooms) do
         local x,y,z = getRoomCoordinates(id)
         if z <= daagar.map.current_z then
@@ -313,8 +313,7 @@ function daagar.map:moveCollidingRooms(area_id)
 end
 
 function daagar.map:connectExitToHere(room_id)
-	local direction = daagar.map.command
-
+	local direction = daagar.map.dir
 	-- Make the bad assumption that exits will always be two way when
 	-- they are cardinal directions. 
 	local opposite_direction = daagar.map:getOppositeDir(direction)
@@ -484,6 +483,7 @@ function daagar.map:followDirection(dir)
 	else
 		local t = getSpecialExitsSwap(daagar.map.current_room)
 		local existing_room = t[dir]
+
 		--display(t)
 		if t and table.contains(t, dir) then
 			log:debug("Found known special exits")
@@ -522,7 +522,7 @@ function daagar.map:mapSpecialExit(dir)
 
   if not daagar.map:isCardinalDirection(dir) and newdir then
     log:debug("Mapping "..special_exit.." to direction "..newdir)
-    daagar.map.command = newdir
+    daagar.map.dir = newdir
     daagar.map:mapDirection(newdir)
     daagar.map:linkSpecialExit(special_exit, daagar.map.DIR_OPPOSITE[newdir])
     mapped_special = true
@@ -536,7 +536,7 @@ function daagar.map:mapDirection(dir)
 
   -- If it is a special exit command, map it
   --if daagar.map:mapSpecialExit(dir) then return end
-
+  
   if daagar.map.current_room == 0 then
 		log:info("Creating first room of area")
 		daagar.map:createNewRoom(roomname, roomdesc, exittable)
